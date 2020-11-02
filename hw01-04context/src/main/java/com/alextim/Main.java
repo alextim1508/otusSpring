@@ -2,14 +2,17 @@ package com.alextim;
 
 import com.alextim.service.InterviewService;
 import com.alextim.service.InterviewServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 @PropertySource("classpath:application.properties")
+@ComponentScan @Slf4j
 public class Main {
     public static void main(String[] args) {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-context.xml");
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Main.class);
         InterviewService service = context.getBean(InterviewServiceImpl.class);
-        service.interview("Ivan", 5);
+        service.interview();
     }
 }

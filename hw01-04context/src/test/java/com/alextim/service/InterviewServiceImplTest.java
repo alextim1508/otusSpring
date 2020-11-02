@@ -38,6 +38,6 @@ public class InterviewServiceImplTest {
 
     @Test
     public void test() {
-       Assertions.assertEquals(2, service.interview("Alex", 4));
+       Assertions.assertEquals(2, service.interview());
     }
 }

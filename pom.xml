@@ -24,7 +24,7 @@
     </parent>
 
     <modules>
-        <module>hw01context</module>
+        <module>hw01-04context</module>
     </modules>
 
     <dependencyManagement>

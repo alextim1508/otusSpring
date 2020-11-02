@@ -2,18 +2,20 @@ package com.alextim.repository;
 
 import com.alextim.domain.Question;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.util.*;
 
-@Slf4j
+@Repository @Slf4j
 public class InterviewRepositoryImpl implements InterviewRepository {
 
     private final List<Question> questions;
 
     private static final String PARSING_ERROR = "Exception questions load from csv file";
 
-    public InterviewRepositoryImpl(String fileNameFromResources) {
+    public InterviewRepositoryImpl(@Value("${application.file}") String fileNameFromResources) {
         try {
             questions = load(fileNameFromResources);
         } catch (IOException e) {
