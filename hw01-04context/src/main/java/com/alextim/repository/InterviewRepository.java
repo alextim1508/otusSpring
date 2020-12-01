@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface InterviewRepository {
     List<Question> getQuestions();
+    List<String> getGreeting();
+    List<String> getResults();
 }
