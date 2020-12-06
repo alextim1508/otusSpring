@@ -7,7 +7,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.MessageSource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -20,9 +19,9 @@ import static org.mockito.Mockito.*;
 public class InterviewRepositoryImplTest {
 
     @MockBean
-    private MessageSource messageSource;
-    @MockBean
     private ApplicationSettings settings;
+    @MockBean
+    private MessageSource messageSource;
     @Autowired
     private InterviewRepositoryImpl repository;
 
@@ -30,6 +29,9 @@ public class InterviewRepositoryImplTest {
     public void initMock() {
         when(settings.isUseEnglishLocal()).thenReturn(true);
         when(settings.getQuestionCount()).thenReturn(5);
+        when(messageSource.getMessage(any(), any(), any())).thenReturn("Russia;Moscow");
+
+        repository.load();
     }
 
     @Test
