@@ -15,21 +15,21 @@ import java.util.Map;
 @Repository @RequiredArgsConstructor
 public class AuthorRepositoryJdbc implements AuthorRepository {
 
-    private final NamedParameterJdbcOperations jdbc;
+    private final NamedParameterJdbcOperations jdbcOperations;
 
     @Override
     public void insert(Author author) {
         final Map<String, Object> params = new HashMap<>(2);
         params.put("firstname", author.getFirstname());
         params.put("lastname", author.getLastname());
-        jdbc.update("insert into authors (firstname, lastname) values (:firstname, :lastname);",
+        jdbcOperations.update("insert into authors (firstname, lastname) values (:firstname, :lastname);",
                 params);
 
     }
 
     @Override
     public long getCount() {
-        return jdbc.getJdbcOperations().queryForObject("select count(*) from authors;", Integer.class);
+        return jdbcOperations.getJdbcOperations().queryForObject("select count(*) from authors;", Integer.class);
     }
 
     @Override
@@ -37,14 +37,14 @@ public class AuthorRepositoryJdbc implements AuthorRepository {
         final Map<String, Object> params = new HashMap<>(2);
         params.put("low_limit", amountByOnePage * (page-1));
         params.put("amount", amountByOnePage);
-        return jdbc.query("select * from authors order by id limit :low_limit, :amount", params, new AuthorMapper());
+        return jdbcOperations.query("select * from authors order by id limit :low_limit, :amount", params, new AuthorMapper());
     }
 
     @Override
     public Author findById(long id) {
         final Map<String, Object> params = new HashMap<>(1);
         params.put("id", id);
-        return jdbc.queryForObject("select * from authors where id = :id", params, new AuthorMapper());
+        return jdbcOperations.queryForObject("select * from authors where id = :id", params, new AuthorMapper());
     }
 
     @Override
@@ -54,14 +54,14 @@ public class AuthorRepositoryJdbc implements AuthorRepository {
         params.put("firstname", author.getFirstname());
         params.put("lastname", author.getLastname());
 
-        jdbc.update("update authors set firstname = :firstname,  lastname = :firstname where id = :id", params);
+        jdbcOperations.update("update authors set firstname = :firstname,  lastname = :lastname where id = :id", params);
     }
 
     @Override
     public void delete(long id) {
         final Map<String, Object> params = new HashMap<>(1);
         params.put("id", id);
-        jdbc.update("delete from authors where id = :id", params);
+        jdbcOperations.update("delete from authors where id = :id", params);
     }
 
     private class AuthorMapper implements RowMapper<Author> {

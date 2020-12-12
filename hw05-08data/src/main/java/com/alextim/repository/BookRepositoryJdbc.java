@@ -17,7 +17,7 @@ import java.util.Map;
 @Repository @RequiredArgsConstructor
 public class BookRepositoryJdbc implements BookRepository {
 
-    private final NamedParameterJdbcOperations jdbc;
+    private final NamedParameterJdbcOperations jdbcOperations;
 
     private final AuthorRepository authorRepository;
 
@@ -29,13 +29,13 @@ public class BookRepositoryJdbc implements BookRepository {
         params.put("title", book.getTitle());
         params.put("authorId", book.getAuthor().getId());
         params.put("genreId", book.getGenre().getId());
-        jdbc.update("insert books(title author_id, genre_id) values (:title, :authorId, :genreId)",
+        jdbcOperations.update("insert books(title author_id, genre_id) values (:title, :authorId, :genreId)",
                 params);
     }
 
     @Override
     public long getCount() {
-        return jdbc.getJdbcOperations().queryForObject("select count(*) from books;", Integer.class);
+        return jdbcOperations.getJdbcOperations().queryForObject("select count(*) from books;", Integer.class);
     }
 
     @Override
@@ -43,14 +43,14 @@ public class BookRepositoryJdbc implements BookRepository {
         final Map<String, Object> params = new HashMap<>(2);
         params.put("low_limit", amountByOnePage * (page - 1));
         params.put("amount", amountByOnePage);
-        return jdbc.query("select * from books order by id limit :low_limit, :amount", params, new BookMapper());
+        return jdbcOperations.query("select * from books order by id limit :low_limit, :amount", params, new BookMapper());
     }
 
     @Override
     public Book findById(long id) {
         final Map<String, Object> params = new HashMap<>(1);
         params.put("id", id);
-        return jdbc.queryForObject("select * from books where id = :id",
+        return jdbcOperations.queryForObject("select * from books where id = :id",
                 params,
                 new BookMapper());
     }
@@ -64,7 +64,7 @@ public class BookRepositoryJdbc implements BookRepository {
         params.put("authorId", book.getAuthor().getId());
         params.put("genreId", book.getGenre().getId());
 
-        jdbc.update("update books set title = :titleBook, author_id = :authorId, genre_id = :genreId where id = :idBook",
+        jdbcOperations.update("update books set title = :titleBook, author_id = :authorId, genre_id = :genreId where id = :idBook",
                 params);
     }
 
@@ -72,7 +72,7 @@ public class BookRepositoryJdbc implements BookRepository {
     public void delete(long id) {
         final Map<String, Object> params = new HashMap<>(1);
         params.put("id", id);
-        jdbc.update("delete from books where id = :id", params);
+        jdbcOperations.update("delete from books where id = :id", params);
     }
 
 
