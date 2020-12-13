@@ -24,3 +24,6 @@ insert into books(title, author_id, genre_id) values('Милый друг',				5
 insert into books(title, author_id, genre_id) values('Пышка',					5, 2);
 insert into books(title, author_id, genre_id) values('Россия в кривых зеркалах',6, 6);
 commit;
+
+insert into comments(comment, book_id) values('Супер', 1);
+commit;

@@ -11,3 +11,8 @@ spring:
   logging:
     level:
       org.springframework.web: INFO
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate

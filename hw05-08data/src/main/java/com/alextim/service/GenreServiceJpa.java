@@ -1,33 +1,36 @@
 package com.alextim.service;
 
 
+import com.alextim.domain.Book;
 import com.alextim.domain.Genre;
 import com.alextim.repository.GenreRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.alextim.service.Helper.*;
-
 @Service
-@RequiredArgsConstructor
-public class GenreServiceJdbc implements GenreService{
+public class GenreServiceJpa implements GenreService{
 
-    private final GenreRepository genreRepository;
+    private final String ERROR_STRING = "Операция с объектом %s не выполнена";
+    private final String DUPLICATE_ERROR_STRING = "Запись %s существует";
+
+    @Autowired
+    private GenreRepository genreRepository;
 
     @Override
     public Genre add(String title) {
         Genre genre = new Genre(title);
         try{
             genreRepository.insert(genre);
-        } catch (DuplicateKeyException exception){
-            throw new RuntimeException(String.format(DUPLICATE_ERROR_STRING, genre));
-        } catch(DataAccessException exception) {
-            throw new RuntimeException(String.format(ERROR_STRING, genre));
+        }
+        catch (DataIntegrityViolationException exception) {
+            String causeMsg= exception.getCause().getCause().getMessage();
+            if(causeMsg.contains("Нарушение уникального индекса или первичного ключ"))
+                throw new RuntimeException(String.format(DUPLICATE_ERROR_STRING, genre));
+            else
+                throw new RuntimeException(String.format(ERROR_STRING, genre));
         }
         return genre;
     }
@@ -47,12 +50,16 @@ public class GenreServiceJdbc implements GenreService{
         Genre genre;
         try {
             genre = genreRepository.findById(id);
-        } catch (EmptyResultDataAccessException exception) {
-            throw new RuntimeException(String.format(EMPTY_RESULT_BY_ID_ERROR_STRING, Genre.class.getSimpleName(), id));
-        } catch(DataAccessException exception) {
+        }
+        catch (DataIntegrityViolationException exception) {
             throw new RuntimeException(String.format(ERROR_STRING, Genre.class.getSimpleName()));
         }
         return genre;
+    }
+
+    @Override
+    public List<Book> getBooks(long id) {
+        return genreRepository.getBooks(id);
     }
 
     @Override
@@ -60,7 +67,8 @@ public class GenreServiceJdbc implements GenreService{
         Genre genre = new Genre(title);
         try {
             genreRepository.update(id, genre);
-        } catch(DataAccessException exception) {
+        }
+        catch (DataIntegrityViolationException exception) {
             throw new RuntimeException(String.format(ERROR_STRING, Genre.class.getSimpleName()));
         }
         return genre;
@@ -70,7 +78,8 @@ public class GenreServiceJdbc implements GenreService{
     public void delete(long id) {
         try {
             genreRepository.delete(id);
-        } catch(DataAccessException exception) {
+        }
+        catch (DataIntegrityViolationException exception) {
             throw new RuntimeException(String.format(ERROR_STRING, Genre.class.getSimpleName()));
         }
     }

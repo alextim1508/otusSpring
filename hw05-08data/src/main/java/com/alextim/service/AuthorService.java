@@ -13,6 +13,8 @@ public interface AuthorService {
 
     Author findById(long id);
 
+    List<Book> getBooks(long id);
+
     Author update(long id, String firstname, String lastname);
 
     void delete(long id);

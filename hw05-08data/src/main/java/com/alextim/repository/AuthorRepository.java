@@ -13,6 +13,10 @@ public interface AuthorRepository {
     List<Author> getAll(int page, int amountByOnePage);
 
     Author findById(long id);
+    List<Author> findByLastname(String lastname);
+
+    List<Book> getBooks(long id);
+
 
     void update(long id, Author author);
 
