@@ -13,6 +13,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.alextim.domain.Book.FIELD_TITLE;
 
@@ -23,7 +24,6 @@ public class BookRepositoryJpa implements BookRepository{
     @PersistenceContext
     private EntityManager em;
 
-    @Transactional
     @Override
     public void insert(Book book) {
         em.persist(book);
@@ -32,7 +32,7 @@ public class BookRepositoryJpa implements BookRepository{
     @Override
     public long getCount() {
         Query query = em.createQuery("select count(b) from Book b");
-        return (Long)query.getSingleResult();
+        return (long)query.getSingleResult();
     }
 
     @Override
@@ -41,43 +41,30 @@ public class BookRepositoryJpa implements BookRepository{
             throw new IllegalArgumentException("Must be amountByOnePage > 0 and page > 0");
 
         TypedQuery<Book> query = em.createQuery("select b from Book b", Book.class);
-        query.setFirstResult((--page) * amountByOnePage);
+        query.setFirstResult((page-1) * amountByOnePage);
         query.setMaxResults(amountByOnePage);
         return query.getResultList();
     }
 
     @Override
-    public Book findById(long id) {
-        return em.find(Book.class, id);
+    public Optional<Book> findById(long id) {
+        return Optional.ofNullable(em.find(Book.class, id));
     }
 
     @Override
     public List<Book> findByTitle(String title) {
-        TypedQuery<Book> query = em.createQuery("select b from Book b where "+ FIELD_TITLE + " = :title", Book.class);
+        TypedQuery<Book> query = em.createQuery(String.format("select b from Book b where %s = :title", FIELD_TITLE), Book.class);
         query.setParameter("title", title);
         return query.getResultList();
     }
 
-    @Transactional
     @Override
-    public List<Comment> getComments(long id) {
-        return new ArrayList<>(em.find(Book.class, id).getComments());
+    public void update(Book book) {
+        em.merge(book);
     }
 
-    @Transactional
     @Override
-    public void update(long id, Book book) {
-        Book byId = findById(id);
-        byId.setTitle(book.getTitle());
-        byId.setAuthor(book.getAuthor());
-        byId.setGenre(book.getGenre());
-    }
-
-    @Transactional
-    @Override
-    public void delete(long id) {
-        Query query = em.createQuery("delete from Book b where b.id = :id");
-        query.setParameter("id", id);
-        query.executeUpdate();
+    public void delete(Book book) {
+        em.remove(book);
     }
 }

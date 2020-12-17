@@ -1,9 +1,9 @@
 package com.alextim.repository;
 
 import com.alextim.domain.Author;
-import com.alextim.domain.Book;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AuthorRepository {
 
@@ -12,13 +12,10 @@ public interface AuthorRepository {
     long getCount();
     List<Author> getAll(int page, int amountByOnePage);
 
-    Author findById(long id);
+    Optional<Author> findById(long id);
     List<Author> findByLastname(String lastname);
 
-    List<Book> getBooks(long id);
+    void update(Author author);
 
-
-    void update(long id, Author author);
-
-    void delete(long id);
+    void delete(Author author);
 }

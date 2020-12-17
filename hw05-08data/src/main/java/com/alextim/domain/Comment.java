@@ -11,16 +11,16 @@ import static com.alextim.domain.Comment.COLLECTION_TITLE;
 public class Comment {
 
     public static final String COLLECTION_TITLE = "comments";
-    public static final String FIELD_COMMENT = "comment";
+    public static final String FIELD_CONTENT = "content";
     public static final String FIELD_BOOK_ID = "book_id";
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
     private long id;
 
-    @Column(length = 100, name = FIELD_COMMENT)
+    @Column(length = 100, name = FIELD_CONTENT)
     @NonNull
-    private String comment;
+    private String content;
 
     @ManyToOne @JoinColumn(name= FIELD_BOOK_ID)
     @NonNull

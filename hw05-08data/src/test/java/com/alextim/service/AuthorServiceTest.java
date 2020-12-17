@@ -39,9 +39,9 @@ public class AuthorServiceTest {
         when(authorRepository.findById(any(Long.class))).
                 thenAnswer(answer -> new Author("Александр", "Пушкин"));
 
-        doNothing().when(authorRepository).update(any(Long.class), any(Author.class));
+        doNothing().when(authorRepository).update( any(Author.class));
 
-        doNothing().when(authorRepository).delete(any(Long.class));
+        doNothing().when(authorRepository).delete(any(Author.class));
     }
 
 

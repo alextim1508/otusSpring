@@ -1,9 +1,9 @@
 package com.alextim.repository;
 
-import com.alextim.domain.Book;
 import com.alextim.domain.Genre;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GenreRepository {
 
@@ -12,12 +12,10 @@ public interface GenreRepository {
     long getCount();
     List<Genre> getAll(int page, int amountByOnePage);
 
-    Genre findById(long id);
+    Optional<Genre> findById(long id);
     List<Genre> findByTitle(String title);
 
-    List<Book> getBooks(long id);
+    void update(Genre genre);
 
-    void update(long id, Genre genre);
-
-    void delete(long id);
+    void delete(Genre genre);
 }

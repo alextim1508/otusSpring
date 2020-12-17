@@ -12,6 +12,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.alextim.domain.Author.FIELD_LASTNAME;
 
@@ -23,7 +24,6 @@ public class AuthorRepositoryJpa implements AuthorRepository {
     @PersistenceContext
     private EntityManager em;
 
-    @Transactional
     @Override
     public void insert(Author author) {
         em.persist(author);
@@ -41,43 +41,31 @@ public class AuthorRepositoryJpa implements AuthorRepository {
             throw new IllegalArgumentException("Must be amountByOnePage > 0 and page > 0");
 
         TypedQuery<Author> query = em.createQuery("select a from Author a", Author.class);
-        query.setFirstResult((--page) * amountByOnePage);
+        query.setFirstResult((page-1) * amountByOnePage);
         query.setMaxResults(amountByOnePage);
         return query.getResultList();
     }
 
     @Override
-    public Author findById(long id) {
-        return em.find(Author.class, id);
+    public Optional<Author> findById(long id) {
+        return Optional.ofNullable(em.find(Author.class, id));
     }
 
     @Override
     public List<Author> findByLastname(String lastname) {
-        TypedQuery<Author> query = em.createQuery("select a from Author a where " + FIELD_LASTNAME + " = :lastname", Author.class);
+        TypedQuery<Author> query = em.createQuery(String.format("select a from Author a where %s = :lastname", FIELD_LASTNAME), Author.class);
         query.setParameter("lastname", lastname);
         return query.getResultList();
     }
 
-    @Transactional
     @Override
-    public List<Book> getBooks(long id) {
-        return new ArrayList<>(em.find(Author.class, id).getBooks());
+    public void update(Author author) {
+        em.merge(author);
     }
 
-    @Override
-    @Transactional
-    public void update(long id, Author author) {
-        Author byId = findById(id);
-        byId.setFirstname(author.getFirstname());
-        byId.setLastname(author.getLastname());
-        em.merge(byId);
-    }
 
-    @Transactional
     @Override
-    public void delete(long id) {
-        Query query = em.createQuery("delete from Author a where a.id = :id");
-        query.setParameter("id", id);
-        query.executeUpdate();
+    public void delete(Author author) {
+        em.remove(author);
     }
 }

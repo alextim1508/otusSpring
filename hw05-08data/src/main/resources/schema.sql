@@ -20,7 +20,7 @@ create table books(	id bigint not null auto_increment,
 
 drop table if exists comments;
 create table comments(id bigint not null auto_increment,
-                      comment varchar(100) not null,
+                      content varchar(100) not null,
                       book_id bigint,
                       primary key(id),
                       constraint fk_comments_books foreign key(book_id) references books(id));

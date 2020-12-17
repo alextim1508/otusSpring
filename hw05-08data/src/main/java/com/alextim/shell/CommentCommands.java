@@ -53,10 +53,9 @@ public class CommentCommands {
 
     @ShellMethod("update comment")
     public void updateComment(@ShellOption int id,
-                             @ShellOption String comment,
-                             @ShellOption int bookId) {
+                             @ShellOption String comment) {
         try {
-            service.update(id, comment, id);
+            service.update(id, comment);
             log.info("Comment updated");
         } catch (Exception e) {
             log.error(e.getMessage());

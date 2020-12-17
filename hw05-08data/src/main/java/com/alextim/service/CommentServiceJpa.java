@@ -5,14 +5,14 @@ import com.alextim.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.alextim.service.Helper.*;
+
 @Service
 public class CommentServiceJpa implements CommentService{
-
-    private final String ERROR_STRING = "Операция с объектом %s не выполнена";
-    private final String DUPLICATE_ERROR_STRING = "Запись %s существует";
 
     @Autowired
     private CommentRepository commentRepository;
@@ -20,62 +20,67 @@ public class CommentServiceJpa implements CommentService{
     @Autowired
     private BookService bookService;
 
+    @Transactional
     @Override
-    public void add(String comment, int bookId) {
-        Comment com = new Comment(comment, bookService.findById(bookId));
+    public void add(String content, int bookId) {
+        Comment comment = new Comment(content, bookService.findById(bookId));
         try {
-            commentRepository.insert(com);
-        }
-        catch (DataIntegrityViolationException exception) {
+            commentRepository.insert(comment);
+        } catch (DataIntegrityViolationException exception) {
             if(exception.getCause().getCause().getMessage().contains("Нарушение уникального индекса или первичного ключ"))
-                throw new RuntimeException(String.format(DUPLICATE_ERROR_STRING, com));
+                throw new RuntimeException(String.format(DUPLICATE_ERROR_STRING, comment));
             else
-                throw new RuntimeException(String.format(ERROR_STRING, com));
+                throw new RuntimeException(String.format(ERROR_STRING, comment));
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public long getCount() {
         return commentRepository.getCount();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Comment> getAll(int page, int amountByOnePage) {
         return commentRepository.getAll(page, amountByOnePage);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Comment findById(long id) {
-        Comment com;
+        Comment comment;
         try {
-            com = commentRepository.findById(id);
-        }
-        catch (DataIntegrityViolationException exception) {
+            comment = commentRepository.findById(id).orElseThrow(()->
+                    new RuntimeException(String.format(EMPTY_RESULT_BY_ID_ERROR_STRING, Comment.class.getSimpleName(), id)));
+        } catch (DataIntegrityViolationException exception) {
             throw new RuntimeException(String.format(ERROR_STRING, Comment.class.getSimpleName()));
         }
-        return com;
+        return comment;
     }
 
+    @Transactional
     @Override
-    public Comment update(long id, String comment, int bookId) {
-        Comment com = new Comment(comment, bookService.findById(bookId));
+    public Comment update(long id, String content) {
+        Comment comment = findById(id);
+
+        if(content != null)
+            comment.setContent(content);
         try {
-            commentRepository.update(id, com);
-        }
-        catch (DataIntegrityViolationException exception) {
-            System.out.println(exception.getMessage());
+            commentRepository.update(comment);
+        } catch (DataIntegrityViolationException exception) {
             throw new RuntimeException(String.format(ERROR_STRING, Comment.class.getSimpleName()));
         }
-        return com;
+        return comment;
     }
 
+    @Transactional
     @Override
     public void delete(long id) {
+        Comment comment = findById(id);
         try {
-            commentRepository.delete(id);
-        }
-        catch (DataIntegrityViolationException exception) {
-            System.out.println(exception.getMessage());
+            commentRepository.delete(comment);
+        } catch (DataIntegrityViolationException exception) {
             throw new RuntimeException(String.format(ERROR_STRING, Comment.class.getSimpleName()));
         }
     }

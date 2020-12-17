@@ -7,14 +7,20 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.PersistenceException;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
+@DataJpaTest
+@Import({AuthorRepositoryJpa.class, GenreRepositoryJpa.class, BookRepositoryJpa.class})
 public class AuthorRepositoryIntegrationTest {
 
     @Autowired
@@ -27,85 +33,61 @@ public class AuthorRepositoryIntegrationTest {
     private GenreRepository genreRepository;
 
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test(expected = PersistenceException.class)
     public void getDuplicateException() {
-        authorRepository.insert(new Author("Александр", "Пушкин"));
         authorRepository.insert(new Author("Александр", "Пушкин"));
     }
 
     @Test
-    public void insertAndDeleteTest() {
+    public void insertTest() {
         Author esenin = new Author("Сергей", "Есенин");
         authorRepository.insert(esenin);
 
         List<Author> authors = authorRepository.getAll(1, 10);
-        long lastId = authors.get(authors.size()-1).getId();
         Assert.assertTrue(authors.contains(esenin));
-
-        authorRepository.delete(lastId);
-        authors = authorRepository.getAll(1, 10);
-        Assert.assertFalse(authors.contains(esenin));
     }
 
     @Test
-    public void insertAndUpdateTest() {
-        Author dostoevsky = new Author("Федор", "Достоевский");
-        authorRepository.insert(dostoevsky);
+    public void deleteTest() {
+        Author pushkin = authorRepository.findByLastname("Пушкин").get(0);
+        authorRepository.delete(pushkin);
 
         List<Author> authors = authorRepository.getAll(1, 10);
-        Assert.assertTrue(authors.contains(dostoevsky));
+        Assert.assertFalse(authors.contains(pushkin));
+    }
 
-        Author lermontov = new Author("Михаил", "Лермонтов");
-        long lastId = authors.get(authors.size()-1).getId();
-        authorRepository.update(lastId, lermontov);
+    @Test
+    public void updateTest() {
+        Author gorkiy = authorRepository.findByLastname("Горький").get(0);
 
-        authors = authorRepository.getAll(1, 10);
+        gorkiy.setFirstname("Михаил");
+        gorkiy.setLastname("Лермонтов");
 
-        Assert.assertTrue(authors.contains(lermontov));
-        Assert.assertFalse(authors.contains(dostoevsky));
+        authorRepository.update(gorkiy);
+
+        List<Author> authors = authorRepository.getAll(1, 10);
+
+        Assert.assertTrue(authors.contains(new Author("Михаил", "Лермонтов")));
+        Assert.assertFalse(authors.contains(new Author("Максим", "Горький")));
     }
 
     @Test
     public void findByIdTest() {
-        Author turgenev = new Author("Иван", "Тургенев");
-        authorRepository.insert(turgenev);
-        List<Author> authors = authorRepository.getAll(1, 10);
-        Assert.assertTrue(authors.contains(turgenev));
-
-        long lastId = authors.get(authors.size()-1).getId();
-        Assert.assertEquals(turgenev, authorRepository.findById(lastId));
+        Assert.assertEquals(new Author("Анри", "де Мопасан"), authorRepository.findById(5).get());
     }
 
     @Test
     public void findByLastnameTest() {
-        Author bulgakov = new Author("Михаил", "Булгаков");
-        authorRepository.insert(bulgakov);
-
-        List<Author> authors = authorRepository.findByLastname("Булгаков");
-        Assert.assertEquals(1, authors.size());
-        Assert.assertTrue(authors.contains(bulgakov));
+        List<Author> authors = authorRepository.findByLastname("Левашов");
+        Assert.assertTrue(authors.contains(new Author("Николай", "Левашов")));
     }
 
     @Test
     public void getBooksByAuthorTest() {
-        Author pelevin = new Author("Виктор", "Пелевин");
-        authorRepository.insert(pelevin);
+        Author pelevin = authorRepository.findById(8).orElseThrow(() ->
+                new RuntimeException("Not found"));
 
-        Genre roman = genreRepository.findByTitle("Роман").get(0);
-
-        Book book1 = new Book("Empire V", pelevin, roman);
-        bookRepository.insert(book1);
-        Book book2 = new Book("Священная книга оборотня", pelevin, roman);
-        bookRepository.insert(book2);
-        Book book3 = new Book(" Generation П", pelevin, roman);
-        bookRepository.insert(book3);
-
-
-        List<Book> books = authorRepository.getBooks(pelevin.getId());
-
+        List<Book> books = pelevin.getBooks();
         Assert.assertEquals(3, books.size());
-        Assert.assertTrue(books.contains(book1));
-        Assert.assertTrue(books.contains(book2));
-        Assert.assertTrue(books.contains(book3));
     }
 }

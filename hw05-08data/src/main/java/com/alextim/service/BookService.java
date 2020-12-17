@@ -16,8 +16,7 @@ public interface BookService {
 
     List<Comment> getComments(long id);
 
-    Book update(long id, String title);
-    Book update(long id, String bookTitle, int authorId, int genreId);
+    Book update(long id, String title, int authorId, int genreId);
 
     void delete(long id);
 }
