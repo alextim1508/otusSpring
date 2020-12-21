@@ -1,21 +1,16 @@
 package com.alextim.repository;
 
+import com.alextim.domain.Book;
 import com.alextim.domain.Genre;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface GenreRepository {
+public interface GenreRepository extends PagingAndSortingRepository<Genre, Long> {
 
-    void insert(Genre genre);
+    @Query("select b from Book b left join b.genre g where g.id = ?1")
+    List<Book> getBooks(long id);
 
-    long getCount();
-    List<Genre> getAll(int page, int amountByOnePage);
-
-    Optional<Genre> findById(long id);
     List<Genre> findByTitle(String title);
-
-    void update(Genre genre);
-
-    void delete(Genre genre);
 }

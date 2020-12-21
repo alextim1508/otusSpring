@@ -4,6 +4,7 @@ import com.alextim.domain.Comment;
 import com.alextim.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,7 @@ public class CommentServiceJpa implements CommentService{
     public void add(String content, int bookId) {
         Comment comment = new Comment(content, bookService.findById(bookId));
         try {
-            commentRepository.insert(comment);
+            commentRepository.save(comment);
         } catch (DataIntegrityViolationException exception) {
             if(exception.getCause().getCause().getMessage().contains("Нарушение уникального индекса или первичного ключ"))
                 throw new RuntimeException(String.format(DUPLICATE_ERROR_STRING, comment));
@@ -37,13 +38,13 @@ public class CommentServiceJpa implements CommentService{
     @Transactional(readOnly = true)
     @Override
     public long getCount() {
-        return commentRepository.getCount();
+        return commentRepository.count();
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Comment> getAll(int page, int amountByOnePage) {
-        return commentRepository.getAll(page, amountByOnePage);
+        return commentRepository.findAll(PageRequest.of(page,amountByOnePage)).getContent();
     }
 
     @Transactional(readOnly = true)
@@ -59,6 +60,18 @@ public class CommentServiceJpa implements CommentService{
         return comment;
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<Comment> find(String subTitle) {
+        List<Comment> comments;
+        try {
+            comments = commentRepository.findByContentContaining(subTitle);
+        } catch (DataIntegrityViolationException exception) {
+            throw new RuntimeException(String.format(ERROR_STRING, Comment.class.getSimpleName()));
+        }
+        return comments;
+    }
+
     @Transactional
     @Override
     public Comment update(long id, String content) {
@@ -67,7 +80,7 @@ public class CommentServiceJpa implements CommentService{
         if(content != null)
             comment.setContent(content);
         try {
-            commentRepository.update(comment);
+            commentRepository.save(comment);
         } catch (DataIntegrityViolationException exception) {
             throw new RuntimeException(String.format(ERROR_STRING, Comment.class.getSimpleName()));
         }
@@ -77,9 +90,8 @@ public class CommentServiceJpa implements CommentService{
     @Transactional
     @Override
     public void delete(long id) {
-        Comment comment = findById(id);
         try {
-            commentRepository.delete(comment);
+            commentRepository.deleteById(id);
         } catch (DataIntegrityViolationException exception) {
             throw new RuntimeException(String.format(ERROR_STRING, Comment.class.getSimpleName()));
         }

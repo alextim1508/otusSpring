@@ -1,21 +1,14 @@
 package com.alextim.repository;
 
 import com.alextim.domain.Book;
+import com.alextim.domain.Comment;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface BookRepository {
-
-    void insert(Book book);
-
-    long getCount();
-    List<Book> getAll(int page, int amountByOnePage);
-
-    Optional<Book> findById(long id);
-    List<Book> findByTitle(String title);
-
-    void update(Book book);
-
-    void delete(Book book);
+public interface BookRepository extends PagingAndSortingRepository<Book, Long> {
+    @Query("select c from Comment c left join c.book b where b.id = ?1")
+    List<Comment> getComments(long id);
+    List<Book> findByTitleContaining(String sub);
 }

@@ -12,6 +12,7 @@ public interface GenreService {
     List<Genre> getAll(int page, int amountByOnePage);
 
     Genre findById(long id);
+    List<Genre> find(String title);
 
     List<Book> getBooks(long id);
 

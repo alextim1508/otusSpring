@@ -8,6 +8,7 @@ import com.alextim.domain.Genre;
 import com.alextim.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +46,7 @@ public class BookServiceJpa implements BookService {
 
     private Book add(Book book) {
         try{
-            bookRepository.insert(book);
+            bookRepository.save(book);
         } catch (DataIntegrityViolationException exception) {
             String causeMsg= exception.getCause().getCause().getMessage();
             if(causeMsg.contains("Нарушение уникального индекса или первичного ключ"))
@@ -59,14 +60,13 @@ public class BookServiceJpa implements BookService {
     @Transactional(readOnly = true)
     @Override
     public long getCount() {
-        return bookRepository.getCount();
+        return bookRepository.count();
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Book> getAll(int page, int amountByOnePage) {
-        //////////
-        return bookRepository.getAll(page, amountByOnePage);
+        return bookRepository.findAll(PageRequest.of(page,amountByOnePage)).getContent();
     }
 
     @Transactional(readOnly = true)
@@ -85,7 +85,7 @@ public class BookServiceJpa implements BookService {
     @Transactional(readOnly = true)
     @Override
     public List<Comment> getComments(long bookId) {
-        return findById(bookId).getComments();
+        return bookRepository.getComments(bookId);
     }
 
     @Transactional
@@ -100,7 +100,7 @@ public class BookServiceJpa implements BookService {
             book.setGenre( genreService.findById(genreId));
 
         try {
-            bookRepository.update(book);
+            bookRepository.save(book);
         } catch (DataIntegrityViolationException exception) {
             throw new RuntimeException(String.format(ERROR_STRING, Book.class.getSimpleName()));
         }
@@ -110,9 +110,8 @@ public class BookServiceJpa implements BookService {
     @Transactional
     @Override
     public void delete(long id) {
-        Book book = findById(id);
         try {
-            bookRepository.delete(book);
+            bookRepository.deleteById(id);
         } catch (DataIntegrityViolationException exception) {
             throw new RuntimeException(String.format(ERROR_STRING, Book.class.getSimpleName()));
         }

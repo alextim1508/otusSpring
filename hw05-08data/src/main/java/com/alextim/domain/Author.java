@@ -7,7 +7,7 @@ import java.util.List;
 
 import static com.alextim.domain.Author.COLLECTION_TITLE;
 
-@Entity @Table(name = COLLECTION_TITLE)
+@Entity @Table(name = COLLECTION_TITLE, uniqueConstraints= @UniqueConstraint(columnNames={Author.FIELD_FIRSTNAME, Author.FIELD_LASTNAME}))
 @Data @NoArgsConstructor @RequiredArgsConstructor @EqualsAndHashCode(exclude = {"id", "books"}) @ToString(exclude = "books")
 public class Author {
 

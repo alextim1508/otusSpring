@@ -1,12 +1,12 @@
 package com.alextim.service;
 
 
-import com.alextim.domain.Author;
 import com.alextim.domain.Book;
 import com.alextim.domain.Genre;
 import com.alextim.repository.GenreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,9 +25,8 @@ public class GenreServiceJpa implements GenreService{
     public Genre add(String title) {
         Genre genre = new Genre(title);
         try{
-            genreRepository.insert(genre);
-        }
-        catch (DataIntegrityViolationException exception) {
+            genreRepository.save(genre);
+        } catch (DataIntegrityViolationException exception) {
             String causeMsg= exception.getCause().getCause().getMessage();
             if(causeMsg.contains("Нарушение уникального индекса или первичного ключ"))
                 throw new RuntimeException(String.format(DUPLICATE_ERROR_STRING, genre));
@@ -40,13 +39,13 @@ public class GenreServiceJpa implements GenreService{
     @Transactional(readOnly = true)
     @Override
     public long getCount() {
-        return genreRepository.getCount();
+        return genreRepository.count();
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Genre> getAll(int page, int amountByOnePage) {
-        return genreRepository.getAll(page, amountByOnePage);
+        return genreRepository.findAll(PageRequest.of(page,amountByOnePage)).getContent();
     }
 
     @Transactional(readOnly = true)
@@ -64,8 +63,20 @@ public class GenreServiceJpa implements GenreService{
 
     @Transactional(readOnly = true)
     @Override
+    public List<Genre> find(String title) {
+        List<Genre> genres;
+        try {
+            genres = genreRepository.findByTitle(title);
+        } catch (DataIntegrityViolationException exception) {
+            throw new RuntimeException(String.format(ERROR_STRING, Genre.class.getSimpleName()));
+        }
+        return genres;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public List<Book> getBooks(long genreId) {
-        return findById(genreId).getBooks();
+        return genreRepository.getBooks(genreId);
     }
 
     @Transactional
@@ -76,7 +87,7 @@ public class GenreServiceJpa implements GenreService{
         if(title != null)
             genre.setTitle(title);
         try {
-            genreRepository.update(genre);
+            genreRepository.save(genre);
         } catch (DataIntegrityViolationException exception) {
             throw new RuntimeException(String.format(ERROR_STRING, Genre.class.getSimpleName()));
         }
@@ -86,9 +97,8 @@ public class GenreServiceJpa implements GenreService{
     @Transactional
     @Override
     public void delete(long id) {
-        Genre genre = findById(id);
         try {
-            genreRepository.delete(genre);
+            genreRepository.deleteById(id);
         } catch (DataIntegrityViolationException exception) {
             throw new RuntimeException(String.format(ERROR_STRING, Genre.class.getSimpleName()));
         }
