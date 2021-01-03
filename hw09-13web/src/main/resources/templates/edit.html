@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <form  th:action="@{'/person/' + ${action}}" method= "post" >
+
+            <input type=hidden th:value="${person.id}" name= "id" th:if="${action.equals('save')}"/>
+
+            <label for="inputName">Name: </label>
+            <input type="text" id="inputName" name= "name" th:if="${action.equals('insert')}"/>
+            <input type="text" id="inputName" name= "name" th:value="${person.name}" th:if="${action.equals('save')}"/>
+
+
+            <input type="submit" value="Добавить" th:if="${action.equals('insert')}"/>
+            <input type="submit" value="Редактировать" th:if="${action.equals('save')}"/>
+
+        </form>
+    </body>
+</html>

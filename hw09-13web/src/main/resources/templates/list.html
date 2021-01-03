@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table border= "2">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="person : ${persons}">
+        <td th:text="${person.id}">1</td>
+        <td th:text="${person.name}">Name</td>
+       <td> <a th:href="@{/person/edit(id=${person.id})}">Edit</a></td>
+    </tr>
+    <td colspan="4" align="right"><a href="/person/add">Добавить</a></td>
+    </tbody>
+</table>
+<a href= "/">На главную</a>
+</body>
+</html>
