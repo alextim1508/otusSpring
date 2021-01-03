@@ -1,79 +1,55 @@
 package com.alextim.controller;
 
+
 import com.alextim.domain.Person;
 import com.alextim.service.PersonService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static javax.servlet.http.HttpServletResponse.SC_ACCEPTED;
-import static javax.servlet.http.HttpServletResponse.SC_CREATED;
+import static javax.servlet.http.HttpServletResponse.*;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class PersonController {
 
     private final PersonService personService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index() {
-        return "index";
+    @GetMapping("/person")
+    public List<PersonDto> getAll(HttpServletResponse response) {
+        List<PersonDto> authors = personService.getAll(0, Integer.MAX_VALUE).stream()
+                .map(PersonDto::toDataTransferObject)
+                .collect(Collectors.toList());
+        response.setStatus(SC_OK);
+        response.setContentType("application/json");
+        return authors;
     }
 
-    @RequestMapping(value = "/person", method = RequestMethod.GET)
-    public String getAll(Model model) {
-        List<Person> persons = personService.getAll(0, Integer.MAX_VALUE);
-        model.addAttribute("persons", persons);
-        return "list";
-    }
-
-    @RequestMapping(value = "/person/add", method = RequestMethod.GET)
-    public String add(Model model) {
-        model.addAttribute("action", "insert");
-        return "edit";
-    }
-
-    @RequestMapping(value = "/person/edit", method = RequestMethod.GET)
-    public String edit(@RequestParam(value="id") int id,
-                       Model model)  {
-        model.addAttribute("person", personService.findById(id));
-        model.addAttribute("action", "save");
-        return "edit";
-    }
-
-    @RequestMapping(value = "/person/insert", method = RequestMethod.POST)
-    public String insert(@RequestParam(value="name") String name,
-                         Model model, HttpServletResponse  response) {
-        model.addAttribute("person", personService.add(name));
-        model.addAttribute("action", "insert");
-        response.setStatus(SC_CREATED );
-        return "edited";
-    }
-
-    @RequestMapping(value= "/person/save", method = RequestMethod.POST)
-    public String save(@RequestParam("id") int id,
-                       @RequestParam("name") String name,
-                       Model model, HttpServletResponse  response) {
-        model.addAttribute("person", personService.update(id, name));
-        model.addAttribute("action", "save");
+    @PostMapping("/person/save/{id}")
+    public PersonDto save(  @PathVariable("id") String id,
+                            @RequestBody PersonDto personDto,
+                            HttpServletResponse response) {
+        Person authorDao = PersonDto.toDomainObject(personDto);
+        Person updated = personService.update(Integer.parseInt(id), authorDao.getName());
         response.setStatus(SC_ACCEPTED );
-        return "edited";
+        return PersonDto.toDataTransferObject(updated);
+    }
+
+    @PostMapping("/person/insert")
+    public PersonDto insert(@RequestBody PersonDto personDto,
+                            HttpServletResponse response) {
+        Person authorDao = PersonDto.toDomainObject(personDto);
+        Person inserted = personService.add(authorDao.getName());
+        response.setStatus(SC_CREATED);
+        return PersonDto.toDataTransferObject(inserted);
     }
 
     @ExceptionHandler(Exception.class)
-    public ModelAndView handleException(Exception ex) {
-        ModelAndView modelAndView = new ModelAndView("error");
-        modelAndView.addObject("error", ex.getMessage());
-        modelAndView.setStatus(HttpStatus.BAD_REQUEST);
-        return modelAndView;
+    public String handleException(Exception ex, HttpServletResponse  response) {
+        response.setStatus(SC_BAD_REQUEST);
+        return ex.getMessage();
     }
 }

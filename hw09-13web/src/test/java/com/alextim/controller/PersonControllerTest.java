@@ -9,27 +9,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Locale;
-
-import static javax.servlet.http.HttpServletResponse.SC_ACCEPTED;
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static javax.servlet.http.HttpServletResponse.SC_CREATED;
+import static javax.servlet.http.HttpServletResponse.*;
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(PersonController.class)
-@ContextConfiguration
 @AutoConfigureMockMvc(secure = false)
+@ContextConfiguration
 public class PersonControllerTest {
 
     @Autowired
@@ -39,17 +34,17 @@ public class PersonControllerTest {
     private PersonService personService;
 
     @Before
-    public void initMock() throws Exception {
+    public void initMock() {
         when(personService.add(any(String.class))).thenAnswer(invocation-> {
             Object[] args = invocation.getArguments();
             String name  = (String)args[0];
-            Person person = new Person(name);
+            Person pers = new Person(name);
             if(name.equals("Fedor"))
                 throw new RuntimeException("Запись Fedor существует");
-            return person;
+            return pers;
         });
 
-        when(personService.findById(any(Integer.class))).thenReturn(new Person("Sergey"));
+        when(personService.findById(any(Long.class))).thenReturn(new Person("Sergey"));
 
         when(personService.update(any(Long.class), any(String.class))).thenAnswer(invocation-> {
             Object[] args = invocation.getArguments();
@@ -60,34 +55,32 @@ public class PersonControllerTest {
 
     @Test
     public void insertTest() throws Exception {
+        String name = "Alex";
         mvc.perform(post("/person/insert")
-                .param("name", "Alex"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"name\" : \"" + name + "\" }"))
                 .andExpect(status().is(SC_CREATED))
-                .andExpect(content().string(containsString("Alex добавлен")));
+                .andExpect(jsonPath("$.name").value(name));
     }
 
     @Test
     public void saveTest() throws Exception {
-        mvc.perform(post("/person/save")
-                .param("id", "1")
-                .param("name", "Alex"))
+        String id = "1";
+        String name = "Alex";
+        mvc.perform(post("/person/save/" + id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"name\" : \"" + name + "\" }"))
                 .andExpect(status().is(SC_ACCEPTED))
-                .andExpect(content().string(containsString("Alex обновлен")));
+                .andExpect(jsonPath("$.name").value(name));
     }
 
     @Test
-    public void getErrorHtml() throws Exception {
-        mvc.perform(post("/person/insert")
-                .param("name", "Fedor"))
+    public void handleExceptionTest() throws Exception {
+        String name = "Fedor";
+        this.mvc.perform(post("/person/insert")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"name\" : \"" + name + "\" }"))
                 .andExpect(status().is(SC_BAD_REQUEST))
                 .andExpect(content().string(containsString("Запись Fedor существует")));
     }
-
-
-    @Test
-    public void localizationTest() throws Exception {
-        mvc.perform(get("/").locale(Locale.US))
-                .andExpect(content().string(containsString("Library")));
-    }
-
 }
