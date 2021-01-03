@@ -75,7 +75,7 @@ public class AuthorServiceJpa implements AuthorService {
     @Transactional(readOnly = true)
     @Override
     public List<Book> getBooks(long id){
-        return authorRepository.getBooks(id);
+        return findById(id).getBooks();
     }
 
     @Transactional

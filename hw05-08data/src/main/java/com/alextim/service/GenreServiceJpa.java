@@ -75,8 +75,8 @@ public class GenreServiceJpa implements GenreService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<Book> getBooks(long genreId) {
-        return genreRepository.getBooks(genreId);
+    public List<Book> getBooks(long id) {
+        return findById(id).getBooks();
     }
 
     @Transactional

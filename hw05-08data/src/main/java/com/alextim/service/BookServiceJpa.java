@@ -84,8 +84,8 @@ public class BookServiceJpa implements BookService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Comment> getComments(long bookId) {
-        return bookRepository.getComments(bookId);
+    public List<Comment> getComments(long id) {
+        return findById(id).getComments();
     }
 
     @Transactional

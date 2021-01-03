@@ -10,8 +10,5 @@ import java.util.List;
 
 public interface AuthorRepository extends PagingAndSortingRepository<Author, Long> {
 
-    @Query("select b from Book b left join b.author a where a.id = ?1")
-    List<Book> getBooks(long id);
-
     List<Author> findByFirstnameOrLastname(String firstname, String lastname);
 }
