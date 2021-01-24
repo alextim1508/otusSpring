@@ -1,15 +1,17 @@
-function editPerson(id){
+function editBook(id){
     var formData = {
-        name : $("#inputName" + id).val()
+        firstname : $("#inputBook" + id).val(),
+        lastname : $("#inputAuthor" + id).val(),
+        lastname : $("#inputGenre" + id).val()
     }
     $.ajax({
         type : "post",
         contentType : "application/json",
-        url : "/person/save/" + id,
+        url : "/book/" + id,
         data : JSON.stringify(formData),
         dataType : "json",
         success : function(result) {
-            addToLog("Персон обновлен!");
+            addToLog("Книга обновлена!");
         },
         error : function(e) {
             addToLog(e.responseText);

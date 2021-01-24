@@ -5,24 +5,34 @@
     <title>Title</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="js/ready.js"></script>
-    <script src="js/getPersons.js"></script>
-    <script src="js/addPerson.js"></script>
-    <script src="js/editPerson.js"></script>
-    <script src="js/createPersonsTable.js"></script>
+    <script src="js/getBooks.js"></script>
+    <script src="js/addBook.js"></script>
+    <script src="js/editBook.js"></script>
+    <script src="js/getAuthorById.js"></script>
+    <script src="js/getAuthors.js"></script>
+    <script src="js/getGenreById.js"></script>
+    <script src="js/getGenres.js"></script>
     <script src="js/addToLog.js"></script>
     <link rel="stylesheet" href="css/styles.css"/>
 </head>
 <body>
 
-<div id = "personsTableDiv"></div>
+<div id = "booksTableDiv"></div>
 
-<textarea id= "log"></textarea>
 
-<form id="addPerson" >
-    <label for="inputName">Name:</label>
-    <input type="text" id="inputName"/>
+<form id="addBook">
+    <label for="createdTitleBookId">Book</label>
+    <input type="text" id="createdTitleBookId"/>
+
+    <label for="inputAuthorId">Author</label>
+    <span id = "inputAuthorId"></span>
+
+    <label for="inputGenreId">Genre</label>
+    <span id = "inputGenreId"></span>
+
     <input type="submit" value="Добавить"/>
 </form>
 
+<textarea id= "log"></textarea>
 </body>
 </html>
