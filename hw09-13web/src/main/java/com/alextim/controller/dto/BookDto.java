@@ -11,8 +11,6 @@ import javax.validation.constraints.NotNull;
 @Data @NoArgsConstructor @AllArgsConstructor
 public class BookDto {
 
-    public static final String JSON_EXAMPLE = "{ \"id\" : 1, \"title\" : \"War and Peace\",  \"idAuthor\" : 1, \"idGenre\" : 1 } ";
-
     @Setter(AccessLevel.NONE)
     private long id;
 

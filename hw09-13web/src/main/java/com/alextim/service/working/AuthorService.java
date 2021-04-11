@@ -1,4 +1,4 @@
-package com.alextim.service;
+package com.alextim.service.working;
 
 import com.alextim.domain.Author;
 import com.alextim.domain.Book;

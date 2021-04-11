@@ -9,7 +9,7 @@ function getGenreById(id, handleData) {
             handleData(genre);
         },
         error: function (err) {
-            addToLog("Ошибка получения жанра с id " + id + " : " + err);
+            addToLog("Ошибка получения жанра с id " + id + " : " + JSON.parse(err.responseText)["message"]);
         }
 
     });

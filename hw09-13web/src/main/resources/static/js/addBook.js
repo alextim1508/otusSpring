@@ -14,8 +14,8 @@ function addBook(){
             addToLog("Книга добавлена!");
             addRowToTable(book, book["authorId"], book["genreId"]);
         },
-        error : function(e) {
-            addToLog("Книга не добавлена :" + e.responseText);
+        error : function(err) {
+            addToLog("Книга не добавлена :" + JSON.parse(err.responseText)["message"]);
         }
     });
 }

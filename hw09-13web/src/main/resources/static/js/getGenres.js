@@ -9,7 +9,7 @@ function getGenres(handleData) {
             handleData(result);
         },
         error: function (err) {
-            addToLog("Ошибка получения списка жанров: " + err);
+            addToLog("Ошибка получения жанров: " + JSON.parse(err.responseText)["message"]);
         },
         async: false
     });

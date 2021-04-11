@@ -9,7 +9,7 @@ function getAuthorById(id, handleData) {
             handleData(author);
         },
         error: function (err) {
-            addToLog("Ошибка получения автора с id " + id + " : " + err);
+            addToLog("Ошибка получения автора с id " + id + " : " + JSON.parse(err.responseText)["message"]);
         }
     });
 }

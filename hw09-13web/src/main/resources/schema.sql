@@ -22,3 +22,27 @@ create table books(	id bigint not null auto_increment,
 create unique index unicNameAuthor on authors(firstname, lastname);
 create unique index unicTitleBook on books(title);
 create unique index unicTitleGenre on genres(title);
+
+DROP TABLE IF EXISTS Roles;
+CREATE TABLE IF NOT EXISTS Users (  id BIGINT NOT NULL AUTO_INCREMENT,
+                                    username VARCHAR(45) NOT NULL,
+                                    name VARCHAR(45) NOT NULL,
+                                    surname VARCHAR(45) NOT NULL,
+                                    email VARCHAR(45) NOT NULL,
+                                    encoded_password VARCHAR(45) NOT NULL,
+                                    phone VARCHAR(45) NULL,
+                                    sent_sms VARCHAR(45) NULL,
+                                    account_non_expired BIT NULL,
+                                    account_non_locked BIT NULL,
+                                    credentials_non_expired BIT NULL,
+                                    enabled BIT NULL,
+                                    PRIMARY KEY (id),
+                                    UNIQUE INDEX email_user_unique_index (email ASC),
+                                    UNIQUE INDEX username_user_unique_index (username ASC));
+
+DROP TABLE IF EXISTS Roles;
+CREATE TABLE IF NOT EXISTS Roles(user_id BIGINT NOT NULL,
+                                 role VARCHAR(45) NULL,
+                                 UNIQUE INDEX role_roles_unique_index (role ASC),
+                                 CONSTRAINT fk_Roles_User FOREIGN KEY (user_id) REFERENCES Users (id));
+

@@ -29,3 +29,10 @@ insert into books(title, author_id, genre_id) values('Empire V',                
 insert into books(title, author_id, genre_id) values('Священная книга оборотня',8, 2);
 insert into books(title, author_id, genre_id) values('Generation П',            8, 2);
 commit;
+
+insert into Users(username, name, surname, phone, email, encoded_password,account_non_expired, account_non_locked, credentials_non_expired, enabled)
+            values('Admin', 'admin', 'admin', '+79602574201', 'admin@yandex.ru', 'admin', 1, 1, 1, 1);
+commit;
+
+insert into Roles(user_id, role ) values(1, 'ADMIN');
+commit;

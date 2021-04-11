@@ -1,4 +1,4 @@
-package com.alextim.service;
+package com.alextim.service.working;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.alextim.service;
+package com.alextim.service.working;
 
 
 import com.alextim.domain.Author;
@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.alextim.service.Helper.*;
+import static com.alextim.service.working.Helper.*;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {

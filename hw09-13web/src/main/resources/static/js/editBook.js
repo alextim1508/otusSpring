@@ -13,8 +13,8 @@ function editBook(id){
         success : function(result) {
             addToLog("Книга обновлена!");
         },
-        error : function(e) {
-            addToLog(e.responseText);
+        error : function(err) {
+            addToLog("Ошибка обновления книги: " +JSON.parse(err.responseText)["message"]);
         }
     });
 }

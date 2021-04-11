@@ -9,7 +9,7 @@ function getAuthors(handleData) {
             handleData(result);
         },
         error: function (err) {
-            addToLog("Ошибка получения списка авторов: " + err);
+            addToLog("Ошибка получения списка авторов: " + JSON.parse(err.responseText)["message"] );
         },
         async: false
     });

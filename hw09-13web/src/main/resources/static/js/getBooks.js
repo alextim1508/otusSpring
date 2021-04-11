@@ -9,7 +9,7 @@ function getBooks(handleData) {
             handleData(result);
         },
         error: function (err) {
-            addToLog("Ошибка получения списка книг: " + err);
+            addToLog("Ошибка получения списка книг: " + JSON.parse(err.responseText)["message"]);
         }
     });
 }

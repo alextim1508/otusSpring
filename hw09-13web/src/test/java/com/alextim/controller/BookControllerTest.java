@@ -3,7 +3,7 @@ package com.alextim.controller;
 import com.alextim.domain.Author;
 import com.alextim.domain.Book;
 import com.alextim.domain.Genre;
-import com.alextim.service.BookService;
+import com.alextim.service.working.BookService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

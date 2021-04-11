@@ -5,7 +5,7 @@ import com.alextim.controller.dto.BookDto;
 import com.alextim.controller.dto.MessageDto;
 import com.alextim.domain.Author;
 import com.alextim.domain.Book;
-import com.alextim.service.AuthorService;
+import com.alextim.service.working.AuthorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;

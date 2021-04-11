@@ -1,3 +1,13 @@
+application:
+  url: http://localhost:8080
+  hourValidateTokenForRegistration: 10
+  emailName: Check email
+
+  sms:
+    mock: true
+    login: martinstein150990
+    password: alescha333
+
 spring:
   h2:
     console:
@@ -16,3 +26,15 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: validate
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: martinstein150990@gmail.com
+    password: alescha333
+    protocol: smtp
+    tls: true
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl.trust: smtp.gmail.com
