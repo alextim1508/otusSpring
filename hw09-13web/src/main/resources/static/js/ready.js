@@ -5,34 +5,28 @@ $(document).ready(function () {
 
     document.getElementById("getDataBtn").onclick = function() {
 
-            getAuthors(function(authors) {
-                 authors.forEach(function (author) {
-                    authorsById.set(author["id"], author);
-                 });
-            });
-
-            getGenres(function(genres) {
-                genres.forEach(function (genre) {
-                    genresById.set(genre["id"], genre);
-                });
-            });
-
-            getBooks(function(books) {
-                createBooksTable(books);
-            });
-
-            createAuthorComboBox();
-            createGenreComboBox();
+        getBooks(function(books) {
+            createBooksTable(books);
+        });
     };
 
+    getAuthors(function(authors) {
+    authors.forEach(function (author) {
+            authorsById.set(author["id"], author);
+        });
+    });
+
+    getGenres(function(genres) {
+        genres.forEach(function (genre) {
+            genresById.set(genre["id"], genre);
+        });
+    });
+
+    createAddBookForm();
+
+
+
     createTabs();
-
-
-
-     $("#addBook").submit(function (event) {
-        event.preventDefault();
-        addBook();
-     });
 });
 
 function createTabs() {
@@ -195,6 +189,20 @@ function createLoginForm() {
         login2();
     };
     form.appendChild(button2);
+    form.appendChild(document.createElement("br"));
+
+    var button3 = document.createElement("button");
+    button3.innerHTML = "Логаут";
+    button3.onclick = function() {
+        logout();
+
+        var table = document.getElementById("booksTableDiv");
+        while (table.lastElementChild) {
+            table.removeChild(table.lastElementChild);
+        }
+    };
+    form.appendChild(button3);
+    form.appendChild(document.createElement("br"));
 
     return form;
 }
@@ -278,8 +286,37 @@ function addRowToTable(book, author, genre) {
     tbody.appendChild(createBookRow(book, author, genre));
 }
 
+
+function createAddBookForm() {
+    createTitleBook();
+    createAuthorComboBox();
+    createGenreComboBox();
+    createAddBookBtn();
+}
+
+function createTitleBook() {
+    var addBookForm = document.getElementById("addBookForm");
+
+    var label = document.createElement("label");
+    label.innerHTML = "Название";
+    addBookForm.appendChild(label);
+
+
+
+    var inTitle = document.createElement("input");
+    inTitle.setAttribute("id", "createdTitleBookId");
+    addBookForm.appendChild(inTitle);
+}
+
 function createAuthorComboBox() {
-    var inputAuthorId = document.getElementById("inputAuthorId");
+    var addBookForm = document.getElementById("addBookForm");
+
+    var label = document.createElement("label");
+    label.innerHTML = "Автор";
+    addBookForm.appendChild(label);
+
+    var span = document.createElement("span");
+
     var selectTag = document.createElement("select");
     selectTag.setAttribute("id", "createdAuthorBookId");
 
@@ -289,20 +326,41 @@ function createAuthorComboBox() {
         option.innerHTML = author["firstname"]  + " " + author["lastname"];
         selectTag.appendChild(option);
     });
+    span.appendChild(selectTag);
 
-    inputAuthorId.appendChild(selectTag);
+    addBookForm.appendChild(span);
 }
 
 function createGenreComboBox() {
-    var inputGenreId = document.getElementById("inputGenreId");
+    var addBookForm = document.getElementById("addBookForm");
+
+    var label = document.createElement("label");
+    label.innerHTML = "Жанр";
+    addBookForm.appendChild(label);
+
+    var span = document.createElement("span");
+
     var selectTag = document.createElement("select");
     selectTag.setAttribute("id", "createdGenreBookId");
+
     genresById.forEach(function (genre) {
         var option = document.createElement("option");
         option.value = genre["id"];
         option.innerHTML = genre["title"];
         selectTag.appendChild(option);
     });
+    span.appendChild(selectTag);
 
-    inputGenreId.appendChild(selectTag);
+    addBookForm.appendChild(span);
+}
+
+function createAddBookBtn() {
+    var inputAuthorId = document.getElementById("addBookForm");
+
+    var button = document.createElement("button");
+    button.innerHTML = "Добавить";
+    button.onclick = function() {
+        addBook();
+    };
+    inputAuthorId.appendChild(button);
 }

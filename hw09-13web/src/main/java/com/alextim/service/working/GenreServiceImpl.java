@@ -4,12 +4,15 @@ package com.alextim.service.working;
 import com.alextim.domain.Book;
 import com.alextim.domain.Genre;
 import com.alextim.repository.GenreRepository;
+import com.alextim.service.security.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.alextim.service.working.Helper.*;
@@ -19,6 +22,9 @@ public class GenreServiceImpl implements GenreService{
 
     @Autowired
     private GenreRepository genreRepository;
+
+    @Autowired
+    private SecurityService securityService;
 
     @Transactional
     @Override
@@ -45,7 +51,7 @@ public class GenreServiceImpl implements GenreService{
     @Transactional(readOnly = true)
     @Override
     public List<Genre> getAll(int page, int amountByOnePage) {
-        return genreRepository.findAll(PageRequest.of(page,amountByOnePage)).getContent();
+        return new ArrayList<>(genreRepository.findAll(PageRequest.of(page, amountByOnePage)).getContent());
     }
 
     @Transactional(readOnly = true)
@@ -75,8 +81,8 @@ public class GenreServiceImpl implements GenreService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<Book> getBooks(long id) {
-        return findById(id).getBooks();
+    public List<Book> getBooks(long idGenre) {
+        return findById(idGenre).getBooks();
     }
 
     @Transactional
@@ -94,6 +100,7 @@ public class GenreServiceImpl implements GenreService{
         return genre;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional
     @Override
     public void delete(long id) {

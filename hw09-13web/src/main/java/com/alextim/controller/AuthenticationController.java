@@ -16,14 +16,14 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-    @GetMapping("/public")
+    @GetMapping("/public_test")
     public MessageDto publicData(HttpServletRequest request,
                                  HttpServletResponse response) {
         response.setStatus(SC_OK);
         return new MessageDto("public");
     }
 
-    @GetMapping("/authenticated")
+    @GetMapping("/authenticated_test")
     public MessageDto sucurityData(HttpServletRequest request,
                                     HttpServletResponse response) {
         response.setStatus(SC_OK);
@@ -37,24 +37,38 @@ public class AuthenticationController {
         return new MessageDto("Unauthorized. Have come post request witch username, password to '/login'.");
     }
 
-    @PostMapping("/success1")
+    @PostMapping("/login_success1")
     public MessageDto successPrimaryAuthenticationPage(HttpServletRequest request,
                                                        HttpServletResponse response) {
         response.setStatus(SC_OK);
         return new MessageDto("PrimaryAuthenticationToken Ok. Have come post request witch username, sms to '/login'.");
     }
 
-    @PostMapping("/success2")
+    @PostMapping("/login_success2")
     public MessageDto successSecondaryAuthenticationPage(HttpServletRequest request,
                                                          HttpServletResponse response) {
         response.setStatus(SC_OK);
         return new MessageDto("SecondaryAuthenticationToken Ok. Authorized.");
     }
 
-    @PostMapping("/success")
+    @PostMapping("/login_success")
     public MessageDto successUsernamePasswordAuthenticationPage(HttpServletRequest request,
                                                        HttpServletResponse response) {
         response.setStatus(SC_OK);
         return new MessageDto("UsernamePasswordAuthenticationToken Ok.");
+    }
+
+    @GetMapping("/logout_success")
+    public MessageDto successLogoutPage(HttpServletRequest request,
+                                        HttpServletResponse response) {
+        response.setStatus(SC_OK);
+        return new MessageDto("Logout Ok.");
+    }
+
+    @PostMapping("/login_fail")
+    public MessageDto failLoginPage(HttpServletRequest request,
+                                        HttpServletResponse response) {
+        response.setStatus(SC_OK);
+        return new MessageDto("Login fail.");
     }
 }

@@ -36,3 +36,17 @@ commit;
 
 insert into Roles(user_id, role ) values(1, 'ADMIN');
 commit;
+
+insert into Users(username, name, surname, phone, email, encoded_password,account_non_expired, account_non_locked, credentials_non_expired, enabled)
+            values('User1', 'user1', 'user1', '+79602574202', 'user1@yandex.ru', 'user1', 1, 1, 1, 1);
+commit;
+
+insert into Roles(user_id, role ) values(2, 'GUEST');
+commit;
+
+insert into Users(username, name, surname, phone, email, encoded_password,account_non_expired, account_non_locked, credentials_non_expired, enabled)
+            values('User2', 'user2', 'user2', '+79602574203', 'user2@yandex.ru', 'user2', 1, 1, 1, 1);
+commit;
+
+insert into Roles(user_id, role ) values(3, 'GUEST');
+commit;

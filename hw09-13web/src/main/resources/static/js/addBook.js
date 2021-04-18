@@ -1,4 +1,4 @@
-function addBook(){
+function addBook() {
     var formData = {
         title :  $("#createdTitleBookId").val(),
         authorId :  $("#createdAuthorBookId").val(),
@@ -8,7 +8,7 @@ function addBook(){
         type : "POST",
         contentType : "application/json",
         url : "/book",
-        data : JSON.stringify(formData),
+        data :  JSON.stringify(formData),
         dataType : "json",
         success : function(book) {
             addToLog("Книга добавлена!");
@@ -16,6 +16,7 @@ function addBook(){
         },
         error : function(err) {
             addToLog("Книга не добавлена :" + JSON.parse(err.responseText)["message"]);
-        }
+        },
+        async: false
     });
 }

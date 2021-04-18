@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data @NoArgsConstructor @AllArgsConstructor
-public class GenreDto {
+public class GenreDto implements Dto {
 
     @Setter(AccessLevel.NONE)
     private long id;

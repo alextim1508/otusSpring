@@ -1,6 +1,7 @@
 package com.alextim.controller;
 
 import com.alextim.controller.dto.BookDto;
+import com.alextim.controller.dto.Dto;
 import com.alextim.controller.dto.GenreDto;
 import com.alextim.controller.dto.MessageDto;
 import com.alextim.domain.Book;
@@ -27,11 +28,11 @@ public class GenreController {
     private final GenreService genreService;
 
     @PostMapping()
-    public GenreDto saveGenre(@Valid @RequestBody GenreDto genreDto, BindingResult result,
-                                 HttpServletResponse response) {
+    public Dto saveGenre(@Valid @RequestBody GenreDto genreDto, BindingResult result,
+                         HttpServletResponse response) {
         if(result.hasErrors()) {
             response.setStatus(SC_BAD_REQUEST);
-            return null;
+            return new MessageDto("input data error");
         }
 
         Genre genre = genreService.add(genreDto.getTitle());

@@ -4,12 +4,15 @@ package com.alextim.service.working;
 import com.alextim.domain.Author;
 import com.alextim.domain.Book;
 import com.alextim.repository.AuthorRepository;
+import com.alextim.service.security.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.alextim.service.working.Helper.*;
@@ -19,6 +22,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Autowired
     private AuthorRepository authorRepository;
+
 
     @Transactional
     @Override
@@ -44,7 +48,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Transactional(readOnly = true)
     @Override
     public List<Author> getAll(int page, int amountByOnePage) {
-        return authorRepository.findAll(PageRequest.of(page,amountByOnePage)).getContent();
+        return new ArrayList<>(authorRepository.findAll(PageRequest.of(page, amountByOnePage)).getContent());
     }
 
     @Transactional(readOnly = true)
@@ -74,8 +78,8 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Book> getBooks(long id){
-        return findById(id).getBooks();
+    public List<Book> getBooks(long idAuthor){
+        return findById(idAuthor).getBooks();
     }
 
     @Transactional
