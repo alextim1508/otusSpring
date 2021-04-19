@@ -18,10 +18,6 @@ spring:
     url: jdbc:h2:mem:mydatabase
     initialization-mode: always
 
-  logging:
-    level:
-      org.springframework.web: INFO
-
   jpa:
     show-sql: true
     hibernate:
@@ -38,3 +34,30 @@ spring:
       auth: true
       starttls.enable: true
       ssl.trust: smtp.gmail.com
+
+  management:
+    endpoints:
+      enabled-by-default: false
+      web:
+        exposure:
+          include: '*'
+          exclude: ''
+        base-path: /info
+    endpoint:
+      env:
+        enabled: true
+      configprops:
+        enabled: true
+      liquibase:
+        enabled: true
+      metrics:
+        enabled: true
+      health:
+        enabled: true
+      logfile:
+        enabled: true
+
+  logging:
+    pattern:
+      file: '%d{yyyy-MM-dd HH:mm:ss} %-5level - %msg%n'
+    file: 'logs/log.log'
