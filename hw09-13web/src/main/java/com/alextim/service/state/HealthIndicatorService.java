@@ -14,7 +14,14 @@ public class HealthIndicatorService implements HealthIndicator {
 
     @Override
     public Health health() {
-        if(bookService.getCount() > 0)
+        long bookCount;
+        try {
+            bookCount = bookService.getCount();
+        } catch (Exception e) {
+            return Health.down(new RuntimeException("Database connect failed: " + e.getMessage())).build();
+        }
+
+        if(bookCount > 0)
             return Health.up().build();
         return Health.down(new RuntimeException("Library is empty")).build();
     }
