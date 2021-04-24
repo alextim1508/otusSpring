@@ -1,0 +1,8 @@
+logging:
+  level:
+    org.springframework.web: DEBUG
+
+spring:
+  shell:
+    interactive:
+      enabled: false
