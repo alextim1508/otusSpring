@@ -11,12 +11,16 @@
 
     <properties>
         <lombok.version>1.18.12</lombok.version>
-    </properties>
+        <spring-boot-starter-test.version>2.3.4.RELEASE</spring-boot-starter-test.version>
+        <spring-context-support.version>5.0.1.RELEASE</spring-context-support.version>
+        <spring-boot-starter-logging.version>2.2.10.RELEASE</spring-boot-starter-logging.version>
+        <spring-boot-starter.version>2.0.4.RELEASE</spring-boot-starter.version>
+        <spring-shell-starter.version>2.0.1.RELEASE</spring-shell-starter.version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.7.RELEASE</version>
+        <version>${spring-boot-starter.version}</version>
     </parent>
 
     <modules>

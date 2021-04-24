@@ -1,0 +1,7 @@
+application:
+  use-english-local: true
+  question-count: 5
+
+logging:
+  level:
+    org.springframework.web: INFO
