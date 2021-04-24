@@ -1,21 +1,14 @@
 package com.alextim.repository;
 
 import com.alextim.domain.Author;
+import com.alextim.domain.Book;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface AuthorRepository {
 
-    void insert(Author author);
+public interface AuthorRepository extends PagingAndSortingRepository<Author, Long> {
 
-    long getCount();
-    List<Author> getAll(int page, int amountByOnePage);
-
-    Optional<Author> findById(long id);
-    List<Author> findByLastname(String lastname);
-
-    void update(Author author);
-
-    void delete(Author author);
+    List<Author> findByFirstnameOrLastname(String firstname, String lastname);
 }

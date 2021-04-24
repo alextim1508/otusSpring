@@ -12,8 +12,9 @@ public interface AuthorService {
     List<Author> getAll(int page, int amountByOnePage);
 
     Author findById(long id);
+    List<Author> find(String frstname, String lastname);
 
-    List<Book> getBooks(long id);
+    List<Book> getBooks(long authorId);
 
     Author update(long id, String firstname, String lastname);
 

@@ -11,6 +11,7 @@ public interface CommentService {
     List<Comment> getAll(int page, int amountByOnePage);
 
     Comment findById(long id);
+    List<Comment> find(String subTitle);
 
     Comment update(long id, String comment);
 
