@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data @NoArgsConstructor @AllArgsConstructor
-public class BookDto {
+public class BookDto implements Dto {
 
     @Setter(AccessLevel.NONE)
     private long id;

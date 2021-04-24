@@ -5,12 +5,17 @@ import com.alextim.domain.Author;
 import com.alextim.domain.Book;
 import com.alextim.domain.Genre;
 import com.alextim.repository.BookRepository;
+import com.alextim.service.security.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.alextim.service.working.Helper.*;
@@ -26,6 +31,10 @@ public class BookServiceImpl implements BookService {
 
     @Autowired
     private GenreService genreService;
+
+    @Autowired
+    private SecurityService securityService;
+
     @Transactional
     @Override
     public Book add(String title, long authorId, long genreId) {
@@ -52,6 +61,12 @@ public class BookServiceImpl implements BookService {
             else
                 throw new RuntimeException(String.format(ERROR_STRING, book));
         }
+
+        securityService.addSecurity(
+                SecurityContextHolder.getContext().getAuthentication(),
+                book.getId(),
+                Book.class);
+
         return book;
     }
 
@@ -61,10 +76,11 @@ public class BookServiceImpl implements BookService {
         return bookRepository.count();
     }
 
+    @PostFilter("hasPermission(filterObject, 'ADMINISTRATION') or hasRole('ROLE_ADMIN')")
     @Transactional(readOnly = true)
     @Override
     public List<Book> getAll(int page, int amountByOnePage) {
-        return bookRepository.findAll(PageRequest.of(page,amountByOnePage)).getContent();
+        return new ArrayList<>(bookRepository.findAll(PageRequest.of(page, amountByOnePage)).getContent());
     }
 
     @Transactional(readOnly = true)
@@ -99,6 +115,7 @@ public class BookServiceImpl implements BookService {
         return book;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional
     @Override
     public void delete(long id) {

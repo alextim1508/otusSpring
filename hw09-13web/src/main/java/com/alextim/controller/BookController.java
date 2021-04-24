@@ -1,6 +1,7 @@
 package com.alextim.controller;
 
 import com.alextim.controller.dto.BookDto;
+import com.alextim.controller.dto.Dto;
 import com.alextim.controller.dto.MessageDto;
 import com.alextim.domain.Book;
 import com.alextim.service.working.BookService;
@@ -23,13 +24,14 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping()
-    public BookDto saveBook(@Valid @RequestBody BookDto bookDto,
-                                BindingResult result,
-                                HttpServletResponse response) {
+    public Dto saveBook(@RequestBody BookDto bookDto,
+                        BindingResult result,
+                        HttpServletResponse response) {
         if(result.hasErrors()) {
             response.setStatus(SC_BAD_REQUEST);
-            return null;
+            return new MessageDto("input data error");
         }
+
         Book book = bookService.add(bookDto.getTitle(), bookDto.getAuthorId(), bookDto.getGenreId());
         response.setStatus(SC_CREATED);
         log.info("{} saved", book);

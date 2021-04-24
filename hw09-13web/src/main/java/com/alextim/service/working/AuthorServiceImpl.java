@@ -4,22 +4,25 @@ package com.alextim.service.working;
 import com.alextim.domain.Author;
 import com.alextim.domain.Book;
 import com.alextim.repository.AuthorRepository;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.alextim.service.working.Helper.*;
 
 @Service
-public class AuthorServiceImpl implements AuthorService {
+public class AuthorServiceImpl extends AuthorServiceStub implements AuthorService {
 
     @Autowired
     private AuthorRepository authorRepository;
 
+    @HystrixCommand(fallbackMethod = "addStub")
     @Transactional
     @Override
     public Author add(String firstname, String lastname) {
@@ -35,18 +38,22 @@ public class AuthorServiceImpl implements AuthorService {
         return author;
     }
 
+
+    @HystrixCommand(fallbackMethod = "getCountStub")
     @Transactional(readOnly = true)
     @Override
     public long getCount() {
         return authorRepository.count();
     }
 
+    @HystrixCommand(fallbackMethod = "getAllStub")
     @Transactional(readOnly = true)
     @Override
     public List<Author> getAll(int page, int amountByOnePage) {
-        return authorRepository.findAll(PageRequest.of(page,amountByOnePage)).getContent();
+        return new ArrayList<>(authorRepository.findAll(PageRequest.of(page, amountByOnePage)).getContent());
     }
 
+    @HystrixCommand(fallbackMethod = "findByIdStub")
     @Transactional(readOnly = true)
     @Override
     public Author findById(long id) {
@@ -60,6 +67,7 @@ public class AuthorServiceImpl implements AuthorService {
         return author;
     }
 
+    @HystrixCommand(fallbackMethod = "findStub")
     @Transactional(readOnly = true)
     @Override
     public List<Author> find(String frstname, String lastname) {
@@ -72,12 +80,14 @@ public class AuthorServiceImpl implements AuthorService {
         return authors;
     }
 
+    @HystrixCommand(fallbackMethod = "getBooksStub")
     @Transactional(readOnly = true)
     @Override
-    public List<Book> getBooks(long id){
-        return findById(id).getBooks();
+    public List<Book> getBooks(long idAuthor){
+        return findById(idAuthor).getBooks();
     }
 
+    @HystrixCommand(fallbackMethod = "updateStub")
     @Transactional
     @Override
     public Author update(long id, String firstname, String lastname)  {
@@ -96,6 +106,7 @@ public class AuthorServiceImpl implements AuthorService {
         return author;
     }
 
+    @HystrixCommand(fallbackMethod = "deleteStub")
     @Transactional
     @Override
     public void delete(long id) {

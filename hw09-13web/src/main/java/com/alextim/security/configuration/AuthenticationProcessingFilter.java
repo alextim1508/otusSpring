@@ -30,7 +30,7 @@ public class AuthenticationProcessingFilter extends AbstractAuthenticationProces
         super(new AntPathRequestMatcher("/login", "POST"));
         setAuthenticationManager(authenticationManager);
         setAuthenticationSuccessHandler(new AuthenticationSuccessHandlerImpl());
-        //setAuthenticationFailureHandler(new AuthenticationFailureHandlerImpl());
+        setAuthenticationFailureHandler(new AuthenticationFailureHandlerImpl());
     }
 
     @Override
@@ -65,15 +65,15 @@ public class AuthenticationProcessingFilter extends AbstractAuthenticationProces
 
             if(authentication instanceof PrimaryAuthenticationToken) {
                 log.info("Authentication success witch PrimaryAuthenticationToken");
-                request.getRequestDispatcher("/success1").forward(request, response);
+                request.getRequestDispatcher("/login_success1").forward(request, response);
             }
             else if(authentication instanceof SecondaryAuthenticationToken) {
                 log.info("Authentication success witch SecondaryAuthenticationToken");
-                request.getRequestDispatcher("/success2").forward(request, response);
+                request.getRequestDispatcher("/login_success2").forward(request, response);
             }
             else if(authentication instanceof UsernamePasswordAuthenticationToken) {
                 log.info("Authentication success witch UsernamePasswordAuthenticationToken");
-                request.getRequestDispatcher("/success").forward(request, response);
+                request.getRequestDispatcher("/login_success").forward(request, response);
             }
             else {
                 log.warn("Unknown authentication token");
@@ -86,11 +86,7 @@ public class AuthenticationProcessingFilter extends AbstractAuthenticationProces
         @Override
         public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
             log.info("Authentication fail");
-            response.setStatus(401);
-            request.setAttribute("errors", "1");
-            request.setAttribute("error", "Unauthorized");
-            request.setAttribute("message", "Unauthorized");
-            request.getRequestDispatcher("/error").forward(request, response);
+            request.getRequestDispatcher("/login_fail").forward(request, response);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.alextim.controller;
 
 import com.alextim.controller.dto.AuthorDto;
 import com.alextim.controller.dto.BookDto;
+import com.alextim.controller.dto.Dto;
 import com.alextim.controller.dto.MessageDto;
 import com.alextim.domain.Author;
 import com.alextim.domain.Book;
@@ -27,12 +28,12 @@ public class AuthorController {
     private final AuthorService authorService;
 
     @PostMapping()
-    public AuthorDto savAuthor(@Valid @RequestBody AuthorDto authorDto,
-                                BindingResult result,
-                                HttpServletResponse response) {
+    public Dto savAuthor(@Valid @RequestBody AuthorDto authorDto,
+                         BindingResult result,
+                         HttpServletResponse response) {
         if(result.hasErrors()) {
             response.setStatus(SC_BAD_REQUEST);
-            return null;
+            return new MessageDto("input data error");
         }
 
         Author author = authorService.add(authorDto.getFirstname(), authorDto.getLastname());
