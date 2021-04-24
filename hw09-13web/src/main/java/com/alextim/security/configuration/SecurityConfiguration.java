@@ -29,6 +29,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests().antMatchers( "/", "/public_test", "/account").permitAll()
                 .and()
+                .authorizeRequests().antMatchers("/actuator/**").permitAll()
+                .and()
                 .authorizeRequests().antMatchers("/authenticated_test", "/author/*", "/genre/*", "/book/**", "/user/*").authenticated()
                 .and()
                 .addFilterBefore(authenticationProcessingFilter, UsernamePasswordAuthenticationFilter.class)
