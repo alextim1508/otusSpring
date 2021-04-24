@@ -1,6 +1,7 @@
 package com.alextim.shell;
 
 import com.alextim.service.AuthorService;
+import com.alextim.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.shell.standard.ShellComponent;
@@ -9,31 +10,31 @@ import org.springframework.shell.standard.ShellOption;
 
 @ShellComponent
 @RequiredArgsConstructor @Slf4j
-public class AuthorCommands {
+public class CommentCommands {
 
-    private final AuthorService service;
+    private final CommentService service;
 
-    @ShellMethod("add author")
-    public void addAuthor(@ShellOption String firsname, @ShellOption String lastname) {
+    @ShellMethod("add comment")
+    public void addComment(@ShellOption String comment, @ShellOption int bookId) {
         try {
-            service.add(firsname, lastname);
-            log.info("Author added");
+            service.add(comment, bookId);
+            log.info("Comment added");
         } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
 
-    @ShellMethod("get author count")
-    public void getAuthorCount() {
+    @ShellMethod("get comment count")
+    public void getCommentCount() {
         try {
-            log.info("Number of authors: {}", service.getCount());
+            log.info("Number of comments: {}", service.getCount());
         } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
 
-    @ShellMethod("get all authors")
-    public void getAllAuthors(@ShellOption int amountByOnePage) {
+    @ShellMethod("get all comments")
+    public void getAllComment(@ShellOption int amountByOnePage) {
         long authorsCount = service.getCount();
         int pages = (int) Math.ceil((double) authorsCount / amountByOnePage);
         for (int page = 1; page <= pages; page++) {
@@ -41,36 +42,34 @@ public class AuthorCommands {
         }
     }
 
-    @ShellMethod("find author by id")
-    public void findAuthorById(@ShellOption int id) {
+    @ShellMethod("find comment by id")
+    public void findCommentById(@ShellOption int id) {
         try {
-            log.info("Authors with {} id: {}", id , service.findById(id));
+            log.info("Comment with {} id: {}", id , service.findById(id));
         } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
 
-
-
-    @ShellMethod("update author")
-    public void updateAuthor(@ShellOption int id,
-                             @ShellOption String firstname,
-                             @ShellOption String lastname) {
+    @ShellMethod("update comment")
+    public void updateComment(@ShellOption int id,
+                             @ShellOption String comment) {
         try {
-            service.update(id, firstname, lastname);
-            log.info("Author updated");
+            service.update(id, comment);
+            log.info("Comment updated");
         } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
 
-    @ShellMethod("delete author")
-    public void deleteAuthor(@ShellOption int id) {
+    @ShellMethod("delete comment")
+    public void deleteComment(@ShellOption int id) {
         try {
             service.delete(id);
-            log.info("Author deleted");
+            log.info("Comment deleted");
         } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
+
 }

@@ -5,9 +5,12 @@ import com.alextim.repository.AuthorRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
@@ -27,11 +30,12 @@ public class AuthorServiceTest {
 
     @Before
     public void setUp() {
-        doNothing().when(authorRepository).insert(any(Author.class));
+        when(authorRepository.save(any(Author.class)))
+                .thenAnswer((Answer<Author>) invocationOnMock -> (Author) invocationOnMock.getArguments()[0]);
 
-        when(authorRepository.getCount()).thenAnswer(answer -> 10);
+        when(authorRepository.count()).thenReturn(10l);
 
-        when(authorRepository.getAll(any(Integer.class), any(Integer.class))).
+        when(authorRepository.findAll(any(Sort.class))).
                 thenAnswer(answer -> Arrays.asList(
                         new Author("Александ", "Пушкин"),
                         new Author("Сергей", "Есенин")));
@@ -39,17 +43,19 @@ public class AuthorServiceTest {
         when(authorRepository.findById(any(Long.class))).
                 thenAnswer(answer -> new Author("Александр", "Пушкин"));
 
-        doNothing().when(authorRepository).update(any(Long.class), any(Author.class));
+        when(authorRepository.save(any(Author.class)))
+                .thenAnswer((Answer<Author>) invocationOnMock -> (Author) invocationOnMock.getArguments()[0]);
 
-        doNothing().when(authorRepository).delete(any(Long.class));
+        doNothing().when(authorRepository).deleteById(any(Long.class));
+
     }
 
 
     @Test
-    public void checkInsertAuthor() throws Exception {
+    public void checkInsertAuthor()  {
         authorService.add("Николай", "Гоголь");
 
-        verify(authorRepository, times(1)).insert(any());
+        verify(authorRepository, times(1)).save(any());
     }
 
 }
