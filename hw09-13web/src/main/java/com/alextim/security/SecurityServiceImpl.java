@@ -1,4 +1,4 @@
-package com.alextim.service.security;
+package com.alextim.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

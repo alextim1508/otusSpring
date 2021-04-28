@@ -132,6 +132,7 @@ public class UserController {
         return new MessageDto(String.format("Unknown action: %s" , userRoleAction.getAction()));
     }
 
+
     @PutMapping("/{id}")
     public MessageDto updateUser(@PathVariable("id") int id,
                                  @Valid @RequestBody UserDto userDto,

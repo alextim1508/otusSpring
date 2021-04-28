@@ -3,6 +3,7 @@ package com.alextim.service;
 import com.alextim.domain.Question;
 import com.alextim.repository.InterviewRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +13,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-@Service @RequiredArgsConstructor() @Slf4j
+@Service
+@RequiredArgsConstructor @Slf4j
 public class InterviewServiceImpl implements InterviewService{
 
     private final InterviewRepository repository;
@@ -40,7 +42,7 @@ public class InterviewServiceImpl implements InterviewService{
             Question question = questions.get(i);
 
             log.info("{}: ", question.getTitle());
-            if(question.getAnswer().toLowerCase().equals(getAnswer(reader).toLowerCase())) {
+            if(question.getAnswer().equalsIgnoreCase(getAnswer(reader))) {
                 score++;
                 log.info(results.get(0));
             } else {
@@ -51,14 +53,9 @@ public class InterviewServiceImpl implements InterviewService{
         return score;
     }
 
+    @SneakyThrows
     @Override
     public String getAnswer(BufferedReader reader) {
-        String line;
-        try {
-            line = reader.readLine();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return line;
+        return reader.readLine();
     }
 }

@@ -4,7 +4,7 @@ package com.alextim.service.working;
 import com.alextim.domain.Book;
 import com.alextim.domain.Genre;
 import com.alextim.repository.GenreRepository;
-import com.alextim.service.security.SecurityService;
+import com.alextim.security.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;

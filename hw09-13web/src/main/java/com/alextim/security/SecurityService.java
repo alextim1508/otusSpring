@@ -1,4 +1,4 @@
-package com.alextim.service.security;
+package com.alextim.security;
 
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
