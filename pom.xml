@@ -13,5 +13,6 @@
         <module>hw01-04context</module>
         <module>hw05-08data</module>
         <module>hw09-13web</module>
+        <module>hw14integration</module>
     </modules>
 </project>
