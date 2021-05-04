@@ -1,19 +1,17 @@
 package com.alextim.service;
 
 import com.alextim.domain.Comment;
+import org.bson.types.ObjectId;
 
 import java.util.List;
 
 public interface CommentService {
-    void add(String comment, int bookId);
-
+    Comment add(String comment) throws Exception;
     long getCount();
     List<Comment> getAll(int page, int amountByOnePage);
-
-    Comment findById(long id);
-    List<Comment> find(String subTitle);
-
-    Comment update(long id, String comment);
-
-    void delete(long id);
+    Comment findById(ObjectId id) throws Exception;
+    List<Comment> find(String subTitle) throws Exception;
+    Comment update(ObjectId id, String comment) throws Exception;
+    void delete(ObjectId id) throws Exception;
+    void deleteAll();
 }

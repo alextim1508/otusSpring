@@ -2,21 +2,18 @@ package com.alextim.service;
 
 import com.alextim.domain.Book;
 import com.alextim.domain.Genre;
+import org.bson.types.ObjectId;
 
 import java.util.List;
 
-public interface GenreService {
-    Genre add(String title);
 
+public interface GenreService {
+    Genre add(String title) throws Exception;
     long getCount();
     List<Genre> getAll(int page, int amountByOnePage);
-
-    Genre findById(long id);
-    List<Genre> find(String title);
-
-    List<Book> getBooks(long id);
-
-    Genre update(long id, String title);
-
-    void delete(long id);
+    Genre findById(ObjectId id) throws Exception;
+    List<Genre> find(String title) throws Exception;
+    Genre update(ObjectId id, String title) throws Exception;
+    void delete(ObjectId id) throws Exception;
+    void deleteAll();
 }

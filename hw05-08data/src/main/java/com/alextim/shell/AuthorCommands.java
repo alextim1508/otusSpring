@@ -3,6 +3,7 @@ package com.alextim.shell;
 import com.alextim.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -42,9 +43,9 @@ public class AuthorCommands {
     }
 
     @ShellMethod("find author by id")
-    public void findAuthorById(@ShellOption int id) {
+    public void findAuthorById(@ShellOption String id) {
         try {
-            log.info("Authors with {} id: {}", id , service.findById(id));
+            log.info("Authors with {} id: {}", id , service.findById(new ObjectId(id)));
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -53,11 +54,11 @@ public class AuthorCommands {
 
 
     @ShellMethod("update author")
-    public void updateAuthor(@ShellOption int id,
+    public void updateAuthor(@ShellOption String id,
                              @ShellOption String firstname,
                              @ShellOption String lastname) {
         try {
-            service.update(id, firstname, lastname);
+            service.update(new ObjectId(id), firstname, lastname);
             log.info("Author updated");
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -65,9 +66,9 @@ public class AuthorCommands {
     }
 
     @ShellMethod("delete author")
-    public void deleteAuthor(@ShellOption int id) {
+    public void deleteAuthor(@ShellOption String id) {
         try {
-            service.delete(id);
+            service.delete(new ObjectId(id));
             log.info("Author deleted");
         } catch (Exception e) {
             log.error(e.getMessage());

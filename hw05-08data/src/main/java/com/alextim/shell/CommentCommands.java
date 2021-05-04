@@ -4,6 +4,7 @@ import com.alextim.service.AuthorService;
 import com.alextim.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -15,9 +16,9 @@ public class CommentCommands {
     private final CommentService service;
 
     @ShellMethod("add comment")
-    public void addComment(@ShellOption String comment, @ShellOption int bookId) {
+    public void addComment(@ShellOption String comment) {
         try {
-            service.add(comment, bookId);
+            service.add(comment);
             log.info("Comment added");
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -43,19 +44,19 @@ public class CommentCommands {
     }
 
     @ShellMethod("find comment by id")
-    public void findCommentById(@ShellOption int id) {
+    public void findCommentById(@ShellOption String id) {
         try {
-            log.info("Comment with {} id: {}", id , service.findById(id));
+            log.info("Comment with {} id: {}", id , service.findById(new ObjectId(id)));
         } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
 
     @ShellMethod("update comment")
-    public void updateComment(@ShellOption int id,
+    public void updateComment(@ShellOption String id,
                              @ShellOption String comment) {
         try {
-            service.update(id, comment);
+            service.update(new ObjectId(id), comment);
             log.info("Comment updated");
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -63,9 +64,9 @@ public class CommentCommands {
     }
 
     @ShellMethod("delete comment")
-    public void deleteComment(@ShellOption int id) {
+    public void deleteComment(@ShellOption String id) {
         try {
-            service.delete(id);
+            service.delete(new ObjectId(id));
             log.info("Comment deleted");
         } catch (Exception e) {
             log.error(e.getMessage());

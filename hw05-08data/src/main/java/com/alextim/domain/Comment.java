@@ -1,28 +1,27 @@
 package com.alextim.domain;
 
-import lombok.*;
 
-import javax.persistence.*;
+import lombok.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import static com.alextim.domain.Comment.COLLECTION_TITLE;
 
-@Entity @Table(name = COLLECTION_TITLE)
-@Data @NoArgsConstructor @RequiredArgsConstructor @EqualsAndHashCode(exclude = {"id"})
+
+@Document(collection=COLLECTION_TITLE)
+@Data @NoArgsConstructor @RequiredArgsConstructor
 public class Comment {
 
     public static final String COLLECTION_TITLE = "comments";
-    public static final String FIELD_CONTENT = "content";
-    public static final String FIELD_BOOK_ID = "book_id";
+    public static final String FIELD_COMMENT = "comment";
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     @Setter(AccessLevel.NONE)
-    private long id;
+    private ObjectId id;
 
-    @Column(length = 100, name = FIELD_CONTENT)
+    @Field(FIELD_COMMENT)
     @NonNull
-    private String content;
-
-    @ManyToOne @JoinColumn(name= FIELD_BOOK_ID)
-    @NonNull
-    private Book book;
+    private String comment;
 }

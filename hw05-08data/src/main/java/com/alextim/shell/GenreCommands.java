@@ -4,6 +4,7 @@ package com.alextim.shell;
 import com.alextim.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -44,18 +45,18 @@ public class GenreCommands {
 
 
     @ShellMethod("find genre by id")
-    public void findGenreById(@ShellOption int id) {
+    public void findGenreById(@ShellOption String id) {
         try {
-            log.info("Genre with {} id: {}", id , service.findById(id));
+            log.info("Genre with {} id: {}", id , service.findById(new ObjectId(id)));
         } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
 
     @ShellMethod("update genre")
-    public void updateGenreById(@ShellOption int id, @ShellOption String title) {
+    public void updateGenreById(@ShellOption String id, @ShellOption String title) {
         try {
-            service.update(id, title);
+            service.update(new ObjectId(id), title);
             log.info("Genre updated");
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -63,9 +64,9 @@ public class GenreCommands {
     }
 
     @ShellMethod("delete genre")
-    public void deleteGenreById(@ShellOption int id) {
+    public void deleteGenreById(@ShellOption String id) {
         try {
-            service.delete(id);
+            service.delete(new ObjectId(id));
             log.info("Genre deleted");
         } catch (Exception e) {
             log.error(e.getMessage());

@@ -1,40 +1,53 @@
 package com.alextim.domain;
 
+
 import lombok.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.*;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.alextim.domain.Book.COLLECTION_TITLE;
+import static com.alextim.domain.Book.FIELD_TITLE;
 
-
-@Entity @Table(name = COLLECTION_TITLE)
-@Data @NoArgsConstructor @RequiredArgsConstructor @EqualsAndHashCode(exclude = {"id", "comments"}) @ToString(exclude = "comments")
+@CompoundIndexes({
+        @CompoundIndex(unique = true, name = "unicTitleBook", def="{'"+ FIELD_TITLE + "' : 1}")
+})
+@Document(collection = COLLECTION_TITLE)
+@Data @NoArgsConstructor @RequiredArgsConstructor @EqualsAndHashCode(exclude = {"id"})
 public class Book {
 
     public static final String COLLECTION_TITLE = "books";
     public static final String FIELD_TITLE = "title";
-    public static final String FIELD_AUTHOR_ID = "author_id";
-    public static final String FIELD_GENRE_ID = "genre_id";
+    public static final String FIELD_AUTHOR = "author";
+    public static final String FIELD_GENRE = "genre";
+    public static final String FIELD_COMMENTS = "comments";
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     @Setter(AccessLevel.NONE)
-    private long id;
+    private ObjectId id;
 
-    @Column(name = FIELD_TITLE)
+    @Field(FIELD_TITLE)
     @NonNull
     private String title;
 
-    @ManyToOne @JoinColumn(name = FIELD_AUTHOR_ID)
+    @Field(FIELD_AUTHOR)
+    @DBRef
     @NonNull
     private Author author;
 
-    @ManyToOne @JoinColumn(name = FIELD_GENRE_ID)
+    @Field(FIELD_GENRE)
+    @DBRef
     @NonNull
     private Genre genre;
 
-    @OneToMany(mappedBy="book", fetch=FetchType.LAZY)
-    private List<Comment> comments;
-
+    @Field(FIELD_COMMENTS)
+    @DBRef
+    private List<Comment> comments = new ArrayList<>();
 }

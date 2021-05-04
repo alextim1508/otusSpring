@@ -2,6 +2,7 @@ package com.alextim.service;
 
 import com.alextim.domain.Author;
 import com.alextim.repository.AuthorRepository;
+import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,19 +41,19 @@ public class AuthorServiceTest {
                         new Author("Александ", "Пушкин"),
                         new Author("Сергей", "Есенин")));
 
-        when(authorRepository.findById(any(Long.class))).
+        when(authorRepository.findById(any(ObjectId.class))).
                 thenAnswer(answer -> new Author("Александр", "Пушкин"));
 
         when(authorRepository.save(any(Author.class)))
                 .thenAnswer((Answer<Author>) invocationOnMock -> (Author) invocationOnMock.getArguments()[0]);
 
-        doNothing().when(authorRepository).deleteById(any(Long.class));
+        doNothing().when(authorRepository).deleteById(any(ObjectId.class));
 
     }
 
 
     @Test
-    public void checkInsertAuthor()  {
+    public void checkInsertAuthor() throws Exception {
         authorService.add("Николай", "Гоголь");
 
         verify(authorRepository, times(1)).save(any());

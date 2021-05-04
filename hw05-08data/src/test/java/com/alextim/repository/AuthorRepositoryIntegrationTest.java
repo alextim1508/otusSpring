@@ -1,9 +1,10 @@
 package com.alextim.repository;
 
 import com.alextim.domain.Author;
-import com.alextim.domain.Book;
+import org.bson.types.ObjectId;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.PersistenceException;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -23,14 +23,18 @@ import java.util.List;
 public class AuthorRepositoryIntegrationTest {
 
     @Autowired
-    private AuthorRepository authorRepository;
+    private static AuthorRepository authorRepository;
 
-    @Autowired
-    private BookRepository bookRepository;
+    private static ObjectId pushkinId;
 
-    @Autowired
-    private GenreRepository genreRepository;
-
+    @BeforeAll
+    public static void setUp(){
+        pushkinId = authorRepository.save(new Author("Александр", "Пушкин")).getId();
+        authorRepository.save(new Author("Михаил", "Лермонтов"));
+        authorRepository.save(new Author("Максим", "Горький"));
+        authorRepository.save(new Author("Николай", "Гоголь"));
+        authorRepository.save(new Author("Николай", "Левашов"));
+    }
 
     @Test(expected = DataIntegrityViolationException.class)
     public void getDuplicateException() {
@@ -48,11 +52,11 @@ public class AuthorRepositoryIntegrationTest {
 
     @Test
     public void deleteTest() {
-        Author pushkin = authorRepository.findByFirstnameOrLastname(null, "Пушкин").get(0);
-        authorRepository.delete(pushkin);
+        Author gogol = authorRepository.findByFirstnameOrLastname(null, "Гоголь").get(0);
+        authorRepository.delete(gogol);
 
         List<Author> authors = authorRepository.findAll(PageRequest.of(0, 10)).getContent();
-        Assert.assertFalse(authors.contains(pushkin));
+        Assert.assertFalse(authors.contains(gogol));
     }
 
     @Test
@@ -72,21 +76,12 @@ public class AuthorRepositoryIntegrationTest {
 
     @Test
     public void findByIdTest() {
-        Assert.assertEquals(new Author("Анри", "де Мопасан"), authorRepository.findById(5l).get());
+        Assert.assertEquals(new Author("Анри", "де Мопасан"), authorRepository.findById(pushkinId).get());
     }
 
     @Test
     public void findByLastnameTest() {
         List<Author> authors = authorRepository.findByFirstnameOrLastname(null, "Левашов");
         Assert.assertTrue(authors.contains(new Author("Николай", "Левашов")));
-    }
-
-    @Test
-    public void getBooksByAuthorTest() {
-        Author pelevin = authorRepository.findById(8l).orElseThrow(() ->
-                new RuntimeException("Not found"));
-
-        List<Book> books = pelevin.getBooks();
-        Assert.assertEquals(3, books.size());
     }
 }

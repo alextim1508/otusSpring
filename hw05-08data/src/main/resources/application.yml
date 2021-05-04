@@ -16,3 +16,11 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: validate
+
+
+  data:
+    mongodb:
+      authentication-database: none
+      database: library
+      port: 27017
+      host: localhost

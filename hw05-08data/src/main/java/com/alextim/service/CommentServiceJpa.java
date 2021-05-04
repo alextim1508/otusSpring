@@ -1,99 +1,92 @@
 package com.alextim.service;
 
+import com.alextim.domain.Book;
 import com.alextim.domain.Comment;
+import com.alextim.domain.Genre;
 import com.alextim.repository.CommentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-import static com.alextim.service.Helper.*;
+import static com.alextim.service.HandlerException.*;
 
 @Service
-public class CommentServiceJpa implements CommentService{
+@RequiredArgsConstructor
+@Transactional
+public class CommentServiceJpa implements CommentService {
 
-    @Autowired
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
 
-    @Autowired
-    private BookService bookService;
-
-    @Transactional
     @Override
-    public void add(String content, int bookId) {
-        Comment comment = new Comment(content, bookService.findById(bookId));
-        try {
+    public Comment add(String com) throws Exception {
+        Comment comment = new Comment(com);
+        try{
             commentRepository.save(comment);
         } catch (DataIntegrityViolationException exception) {
-            if(exception.getCause().getCause().getMessage().contains("Нарушение уникального индекса или первичного ключ"))
-                throw new RuntimeException(String.format(DUPLICATE_ERROR_STRING, comment));
-            else
-                throw new RuntimeException(String.format(ERROR_STRING, comment));
+            handlerException(exception, comment.toString());
         }
+        return comment;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public long getCount() {
         return commentRepository.count();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<Comment> getAll(int page, int amountByOnePage) {
         return commentRepository.findAll(PageRequest.of(page,amountByOnePage)).getContent();
     }
 
-    @Transactional(readOnly = true)
     @Override
-    public Comment findById(long id) {
-        Comment comment;
-        try {
-            comment = commentRepository.findById(id).orElseThrow(()->
-                    new RuntimeException(String.format(EMPTY_RESULT_BY_ID_ERROR_STRING, Comment.class.getSimpleName(), id)));
-        } catch (DataIntegrityViolationException exception) {
-            throw new RuntimeException(String.format(ERROR_STRING, Comment.class.getSimpleName()));
-        }
-        return comment;
+    public Comment findById(ObjectId id) throws Exception {
+        return commentRepository.findById(id).orElseThrow(()->
+                new IllegalArgumentException(String.format(EMPTY_RESULT_BY_ID_ERROR_STRING, Comment.class.getSimpleName(), id)));
     }
 
-    @Transactional(readOnly = true)
     @Override
-    public List<Comment> find(String subTitle) {
-        List<Comment> comments;
+    public List<Comment> find(String subTitle) throws Exception {
+        List<Comment> comments = null;
         try {
-            comments = commentRepository.findByContentContaining(subTitle);
+            commentRepository.findByCommentContaining(subTitle).forEach(comments::add);
         } catch (DataIntegrityViolationException exception) {
-            throw new RuntimeException(String.format(ERROR_STRING, Comment.class.getSimpleName()));
+            handlerException(exception, Genre.class.getSimpleName());
         }
         return comments;
     }
 
-    @Transactional
     @Override
-    public Comment update(long id, String content) {
-        Comment comment = findById(id);
-
-        if(content != null)
-            comment.setContent(content);
+    public Comment update(ObjectId id, String comm) throws Exception {
+        Comment comment = commentRepository.findById(id).orElseThrow(()->
+                new IllegalArgumentException(String.format(EMPTY_RESULT_BY_ID_ERROR_STRING, Comment.class.getSimpleName(), id)));;
+        if(comm!= null)
+            comment.setComment(comm);
         try {
             commentRepository.save(comment);
         } catch (DataIntegrityViolationException exception) {
-            throw new RuntimeException(String.format(ERROR_STRING, Comment.class.getSimpleName()));
+            handlerException(exception, Book.class.getSimpleName());
         }
         return comment;
     }
 
-    @Transactional
     @Override
-    public void delete(long id) {
+    public void delete(ObjectId id) throws Exception {
         try {
             commentRepository.deleteById(id);
         } catch (DataIntegrityViolationException exception) {
-            throw new RuntimeException(String.format(ERROR_STRING, Comment.class.getSimpleName()));
+            handlerException(exception, Comment.class.getSimpleName());
         }
+    }
+
+    @Override
+    public void deleteAll() {
+        commentRepository.deleteAll();
     }
 }
