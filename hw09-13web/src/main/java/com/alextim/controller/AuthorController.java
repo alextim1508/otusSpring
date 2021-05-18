@@ -28,7 +28,7 @@ public class AuthorController {
     private final AuthorService authorService;
 
     @PostMapping()
-    public Dto savAuthor(@Valid @RequestBody AuthorDto authorDto,
+    public Dto saveAuthor(@Valid @RequestBody AuthorDto authorDto,
                          BindingResult result,
                          HttpServletResponse response) {
         if(result.hasErrors()) {

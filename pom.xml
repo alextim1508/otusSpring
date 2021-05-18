@@ -14,5 +14,6 @@
         <module>hw05-08data</module>
         <module>hw09-13web</module>
         <module>hw14integration</module>
+        <module>hw14-16react</module>
     </modules>
 </project>
